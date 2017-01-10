@@ -191,7 +191,7 @@ class MainFunctions:
                         self.allocations.append({'room':\
                         current_room['room'], 'occupant': name})
                         self.allocated_office.append(name)
-                        return "Successfully allocated " + name
+                        return "Successfully allocated " + name + " to " + current_room['room']
                     else:
                         try:
                             self.offices_with_space.remove(\
@@ -246,20 +246,15 @@ class MainFunctions:
         room_list = con_room.all()
         for current_room in room_list:
             self.space.update({current_room.room_name: current_room.space})
-            if len(current_room.occuppants)> 1:
-                for occ in current_room.occuppants.split(","):
-                    self.allocations.append({'room': current_room.room_name, \
-                                         'occupant': occ\
-                                             })
             if current_room.roomType == 'office':
                 self.offices.append({'room': current_room.room_name,\
                 'types': current_room.roomType, 'max': \
                 current_room.maximum_capacity, 'space': \
-                int(current_room.space), 'occupants': \
+                current_room.space, 'occupants': \
                 current_room.occuppants})
                 allocatedd = current_room.occuppants.split(",")
                 self.allocated_office += allocatedd
-                if current_room.space > 0:
+                if int(current_room.space) > 0:
                     self.offices_with_space.append(current_room.room_name)
             else:
                 self.livingspace.append({'room': current_room.room_name,\
@@ -309,12 +304,11 @@ class MainFunctions:
                 new_room.add()
             else:
                 print("Can only be office or livingspace")
-        new_alloc = ""
         for allocation in self.allocations:
-            new_alloc += ("," + allocation['occupant'])
             stmt = update(RoomModel).\
             where(RoomModel.room_name == allocation['room']).\
-            values({'occuppants' : new_alloc[1:], \
+            values({'occuppants' : RoomModel.occuppants + "," + \
+                                   allocation['occupant'], \
             'space' : self.space[allocation['room']]})
             new_session.execute(stmt)
             new_session.commit()
@@ -340,5 +334,5 @@ class MainFunctions:
 
 x = MainFunctions()
 x.load_state()
-print(x.load())
+print(x.reallocate("LEIGH RILEY"))
 x.save_state()
