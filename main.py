@@ -19,6 +19,7 @@ class MainFunctions:
     new_persons = []
     offices = []
     livingspace = []
+    rooms = []
     people = []
     allocations = []
     allocated_office = []
@@ -26,6 +27,8 @@ class MainFunctions:
     offices_with_space = []
     livingspace_with_space = []
     space = {}
+    reallocation = []
+    reallocat = []
 
     def create_room(self, room):
         """creates new room"""
@@ -72,10 +75,13 @@ class MainFunctions:
             else:
                 return "Wrong input. Can only be FELLOW or STAFF"
 
-    def reallocate(self, person):
+
+    def reallocate(self, person, room):
         """Reassigns a person to a different room"""
         pos = ""
         accomodate = "N"
+        current_room = ""
+        new_room = ""
         found = False
         for persons in self.people:
             if persons['person'] == person:
@@ -83,29 +89,27 @@ class MainFunctions:
                 accomodate = persons['accomodate']
                 found = True
         if found:
-            for space in self.livingspace:
-                for occ in space['occupants']:
-                    if person in occ:
-                        try:
-                            occ.remove(person)
-                            space['space'] += 1
-                        except ValueError:
-                            pass
-            for off in self.offices:
-                for occ in off['occupants']:
-                    if person in occ:
-                        try:
-                            occ.remove(person)
-                            space['space'] += 1
-                        except ValueError:
-                            pass
-            for alloc in self.allocations:
-                if alloc['occupant'] == person:
-                    try:
-                        self.allocations.remove(alloc)
-                    except ValueError:
-                        pass
-                    return self.allocate_person(person, pos, accomodate)
+            for roomy in self.rooms:
+                if person in roomy['occupants']:
+                    current_room = roomy['room']
+            for roomy in self.rooms:
+                if not person in roomy['occupants']:
+                    for key, value in roomy.items():
+                        if key == 'room':
+                            new_room = value
+                    if roomy['room'] == new_room:
+                        if self.space[roomy['room']] > 0:
+                            self.reallocat.append({'current': current_room,\
+                                            'new': room, 'person': person})
+                            self.space[room] -= 1
+                            self.space[current_room] += 1
+                            return person + " has been reallocated to " + room
+                            break
+                        else:
+                            return room + " is full."
+                        break
+                else:
+                    return person + " has already been allocated to " +room
         else:
             return "Person does not exist"
 
@@ -172,6 +176,7 @@ class MainFunctions:
         exists = False
         accom = ""
         for person in self.people:
+
             if name == person['person']:
                 types = person['types']
                 accom = person['accomodate']
@@ -268,51 +273,84 @@ class MainFunctions:
                 if current_room.space > 0:
                     self.livingspace_with_space.append(\
                         current_room.room_name)
-
         con_people = new_session.query(PersonModel)
         people_list = con_people.all()
         for person in people_list:
             self.people.append({'person': person.name, 'types': \
              person.position, 'accomodate': person.accomodate})
+        self.rooms = self.offices + self.livingspace
         return "Successfully loaded."
 
-    def save_state(self):
+    def save_state(self, db):
         """Writes changes to database"""
-        engine = create_engine("sqlite:///D:/code/amity/database/amity.db")
-        session = sessionmaker(bind=engine)
-        new_session = session()
-        for person in self.new_persons:
-            if person['position'] == "FELLOW":
-                new_fellow = Fellow(person['person'], person['position'],\
-                person['accomodate'])
-                new_fellow.add(person['person'])
-                new_fellow.add_person(person['person'], person['position'],\
-                person['accomodate'])
-            else:
-                new_staff = Staff(person['person'], person['position'],\
-                person['accomodate'])
-                new_staff.add(person['person'])
-                new_staff.add_person(person['person'], person['position'],\
-                person['accomodate'])
+        try:
+            engine = create_engine("sqlite:///D:/code/amity/database/" + \
+                                   db + ".db")
+            session = sessionmaker(bind=engine)
+            new_session = session()
+            for person in self.new_persons:
+                if person['position'] == "FELLOW":
+                    new_fellow = Fellow(person['person'], person['position'],\
+                    person['accomodate'])
+                    new_fellow.add(person['person'])
+                    new_fellow.add_person(person['person'], person['position'],\
+                    person['accomodate'])
+                else:
+                    new_staff = Staff(person['person'], person['position'],\
+                    person['accomodate'])
+                    new_staff.add(person['person'])
+                    new_staff.add_person(person['person'], person['position'],\
+                    person['accomodate'])
 
-        for room in self.new_rooms:
-            if room['types'] == "office":
-                new_room = Office(room['room'], room['types'])
-                new_room.add()
-            elif room['types'] == "livingspace":
-                new_room = LivingSpace(room['room'], room['types'])
-                new_room.add()
-            else:
-                print("Can only be office or livingspace")
-        for allocation in self.allocations:
-            stmt = update(RoomModel).\
-            where(RoomModel.room_name == allocation['room']).\
-            values({'occuppants' : RoomModel.occuppants + "," + \
-                                   allocation['occupant'], \
-            'space' : self.space[allocation['room']]})
-            new_session.execute(stmt)
-            new_session.commit()
-        return "Successfully saved."
+            for room in self.new_rooms:
+                if room['types'] == "office":
+                    new_room = Office(room['room'], room['types'])
+                    new_room.add()
+                elif room['types'] == "livingspace":
+                    new_room = LivingSpace(room['room'], room['types'])
+                    new_room.add()
+            for allocation in self.allocations:
+                stmt = update(RoomModel).\
+                where(RoomModel.room_name == allocation['room']).\
+                values({'occuppants': RoomModel.occuppants + "," + \
+                                       allocation['occupant'], \
+                'space' : self.space[allocation['room']]})
+                new_session.execute(stmt)
+                new_session.commit()
+            for real in self.reallocat:
+                current_room = ""
+                new_room = ""
+                new_occupants_current = ""
+                new_occupants_new = ""
+                for roomy in self.rooms:
+                    if roomy['room'] == real['current']:
+                        new_occupants_current =\
+                            roomy['occupants'].replace("," + real['person'], "")
+                        current_room = roomy['room']
+                        break
+                for roomy in self.rooms:
+                    if roomy['room'] == real['new']:
+                        new_occupants_new = \
+                            roomy['occupants'] + "," + real['person']
+                        new_room = roomy['room']
+                        break
+                stmt = update(RoomModel).where(\
+                    RoomModel.room_name==real['current'])\
+                    .values({'occuppants': new_occupants_current,\
+                             'space': self.space[current_room]})
+                new_session.execute(stmt)
+                new_session.commit()
+                stmt = update(RoomModel).where(\
+                    RoomModel.room_name==real['new'])\
+                    .values({'occuppants': new_occupants_new,\
+                             'space': self.space[new_room]})
+                new_session.execute(stmt)
+                new_session.commit()
+            self.allocations = []
+            self.reallocat = []
+            return "Successfully saved."
+        except:
+            return "Database " + db + " does not exist"
 
     def print_room(self, room):
         """Prints list of people in room"""
@@ -334,5 +372,5 @@ class MainFunctions:
 
 x = MainFunctions()
 x.load_state()
-print(x.reallocate("LEIGH RILEY"))
-x.save_state()
+print(x.reallocate("DOMINIC WALTERS", "Occulus"))
+x.save_state("amitys")
