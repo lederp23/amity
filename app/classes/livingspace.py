@@ -14,6 +14,9 @@ class LivingSpace(Room):
 
     def add(self):
         """Adds room to database"""
-        new_room = RoomModel(room_name = str(self.room), roomType = str(self.roomType), maximum_capacity = int(self.maximum_capacity), space = str(self.maximum_capacity), occuppants = str(self.occuppants))
+        new_room = RoomModel(room_name = str(self.room), \
+        roomType = str(self.roomType), maximum_capacity = int(\
+        self.maximum_capacity), space = str(self.maximum_capacity), \
+        occuppants = str(self.occuppants))
         session.add(new_room)
         session.commit()

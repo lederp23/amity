@@ -21,6 +21,7 @@ class Person():
     def add_person(self, names, pos, accomodation):
         if accomodation == "":
             accomodation = "N"
-        person = PersonModel(name = names, position = pos, accomodate = accomodation, dateAdded = datetime.now())
+        person = PersonModel(name = names, position = pos, \
+        accomodate = accomodation, dateAdded = datetime.now())
         session.add(person)
         session.commit()

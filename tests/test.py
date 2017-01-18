@@ -30,6 +30,21 @@ class Tester(TestCase):
             self.assertEqual(am.create_room(["Roundtable"]), \
                             "\nSuccessfully added Roundtable")
 
+    def test_add_room_exists(self):
+        """Tests for add_room function"""
+        with patch('builtins.input', return_value='office'):
+            am = Amity()
+            am.load_state("amity")
+            self.assertEqual(am.create_room(["Valhalla"]), \
+                            "Valhalla already exists")
+
+    def test_add_room_wrong_type(self):
+        """Tests for add_room function"""
+        with patch('builtins.input', return_value='off'):
+            am = Amity()
+            self.assertEqual(am.create_room(["Roundtable"]), \
+                            "\nRoundtable can only be office or livingspace")
+
     def test_reallocation(self):
         """Tests for reallocate function"""
         am = Amity()

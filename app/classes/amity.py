@@ -50,7 +50,8 @@ class Amity:
                     msg = msg + "\nSuccessfully added " + room[count]
                     self.changes = True
                 else:
-                    msg = "Room can only be office or livingspace"
+                    msg = msg + "\n" +room[count] + \
+                    " can only be office or livingspace"
         return msg
 
     def add_person(self, name, pos, accomodation):
@@ -132,34 +133,29 @@ class Amity:
     def print_allocations(self, option):
         """Prints a list of room allocations"""
         output = ""
-        roomm = ""
-        self.allocations = sorted(self.allocations, key = lambda room:\
-        (room['room'], room['occupant']))
-        for alloc in self.allocations:
-            if not roomm == alloc['room']:
-                output += "\n\n"
-                output += (alloc['room'] + "\n" + ("-" * 37) + "\n")
-                roomm = alloc['room']
-                output +=( alloc['occupant'])
-            else:
-                output +=(", " + alloc['occupant'])
-
-            files = open(option + ".txt", "w")
-            files.write(output)
-            files.close()
+        for alloc in self.rooms:
+            if not alloc['occupants'] == "":
+                output += "\n"
+                output += (alloc['room'] + "\n" + ("-" * \
+                len(alloc['occupants'][1:])) + "\n")
+                output +=( alloc['occupants'][1:])
+                output += "\n"
+        files = open(("allocations" if option == None else option) + ".txt", "w")
+        files.write(output)
+        files.close()
         return output
 
     def print_unallocated(self, option):
         """Prints list of unallocated people"""
         unallocated = ""
         assigned = True
-        for person in self.details:
-            for alloc in self.allocations:
-                if person in alloc['occupant']:
+        for person in self.people:
+            for alloc in self.rooms:
+                if person['person'] in alloc['occupants']:
                     assigned = False
             if not assigned:
-                unallocated += ("\n" + person)
-        files = open(option + ".txt", "w")
+                unallocated += ("\n" + person['person'])
+        files = open(("unallocated" if option == None else option) + ".txt", "w")
         files.write(unallocated)
         files.close()
         if unallocated == "":
