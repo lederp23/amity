@@ -18,7 +18,7 @@ class Person():
         elif accomodation == 'Y':
             self.accomodate = True
 
-    def add_person(self, names, pos, accomodation):
+    def add_persons(self, names, pos, accomodation):
         if accomodation == "":
             accomodation = "N"
         person = PersonModel(name = names, position = pos, \

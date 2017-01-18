@@ -75,6 +75,7 @@ class Amity:
                 'accomodate': accomodation})
                 self.people.append({'person': name, 'types': \
                     pos, 'accomodate': accomodation})
+                self.changes = True
                 return "Successfully added " + name
             elif pos == 'STAFF':
                 self.new_persons.append({'person': name, 'position': pos,\
@@ -82,6 +83,7 @@ class Amity:
                 self.people.append({'person': name, 'types': \
                     pos, 'accomodate': accomodation})
                 self.changes = True
+                print(self.changes)
                 return "Successfully added " + name
             else:
                 return "Wrong input. Can only be FELLOW or STAFF"
@@ -106,17 +108,13 @@ class Amity:
             for roomy in self.rooms:
                 if person in roomy['occupants']:
                     current_room = roomy['room']
-                    current_type = roomy['types']
-                if roomy['room'] == room:
-                    new_type = roomy['types']
             if not current_room == room:
                 for roomy in self.rooms:
                     if roomy['room'] == room:
                         if self.space[roomy['room']] > 0:
                             self.reallocat.append({'current': current_room,\
                                             'new': room, 'person': person})
-                            if current_type == new_type:
-                                self.space[room] -= 1
+                            self.space[room] -= 1
                             self.space[current_room] += 1
                             msg = person + " has been reallocated to " + room
                             self.changes = True
@@ -148,11 +146,12 @@ class Amity:
     def print_unallocated(self, option):
         """Prints list of unallocated people"""
         unallocated = ""
-        assigned = True
+        assigned = False
         for person in self.people:
+            assigned = False
             for alloc in self.rooms:
                 if person['person'] in alloc['occupants']:
-                    assigned = False
+                    assigned = True
             if not assigned:
                 unallocated += ("\n" + person['person'])
         files = open(("unallocated" if option == None else option) + ".txt", "w")
@@ -312,7 +311,7 @@ class Amity:
             self.changes = False
             engine = create_engine(\
             "sqlite:////Users/olivermunala/Desktop/Amity/amity/app/database/" \
-            + db + ".db")
+            + ("amity" if db == None else db) + ".db")
             session = sessionmaker(bind=engine)
             new_session = session()
             Base.metadata.create_all(engine)
@@ -321,13 +320,13 @@ class Amity:
                     new_fellow = Fellow(person['person'], person['position'],\
                     person['accomodate'])
                     new_fellow.add(person['person'])
-                    new_fellow.add_person(person['person'], person['position'],\
+                    new_fellow.add_persons(person['person'], person['position'],\
                     person['accomodate'])
                 else:
                     new_staff = Staff(person['person'], person['position'],\
-                    person['accomodate'])
+                    person['accomodate' ])
                     new_staff.add(person['person'])
-                    new_staff.add_person(person['person'], person['position'],\
+                    new_staff.add_persons(person['person'], person['position'],\
                     person['accomodate'])
             for room in self.new_rooms:
                 if room['types'] == "office":
@@ -394,3 +393,7 @@ class Amity:
             return "Room not found"
         else:
             return people_list
+
+x = Amity()
+x.load_state("amity")
+x.add_person("Olivers_Munala", "FELLOW", "Y")
