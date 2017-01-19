@@ -7,8 +7,16 @@ Usage:
   main.py print_allocations [--o=filename]
   main.py print_unallocated [--o=filename]
   main.py print_room <room_name>
+  main.py allocate_office <fname_lname>
+  main.py allocate_livingspace <fname_lname>
   main.py save_state [--db=sqlite_database]
   main.py load_state <sqlite_database>
+  main.py remove_person <fname_lname>
+  main.py remove_room <room_name>
+  main.py rename_person <old_fname_lname> <new_fname_lname_name>
+  main.py rename_room <old_room_name> <new_room_name>
+  main.py deallocate_person <fname_lname> <room_type>
+  main.py empty_room <room_name>
   main.py quit
   main.py reset
   main.py clear
@@ -87,8 +95,8 @@ class AmityCli(cmd.Cmd):
     def do_add_person(self, arg):
         """Usage: add_person <fname_lname> <type> [--wants_accommodation=N]"""
         try:
-            print(self.amity.add_person(arg['<fname_lname>'], arg['<type>'],\
-            arg['--wants_accommodation']))
+            print(self.amity.add_person(arg['<fname_lname>'], \
+            arg['<type>'].upper(), arg['--wants_accommodation']))
         except ValueError:
             print("Invalid argument")
 
@@ -161,6 +169,75 @@ class AmityCli(cmd.Cmd):
         prompt = 'Amity>> '
 
     @docopt_cmd
+    def do_remove_person(self, arg):
+        """Usage: remove_person <fname_lname>"""
+        try:
+            print(self.amity.remove_person(arg['<fname_lname>']))
+        except ValueError:
+            print("Invalid argument")
+
+    @docopt_cmd
+    def do_remove_room(self, arg):
+        """Usage: remove_room <room_name>"""
+        try:
+            print(self.amity.remove_person(arg['<room_name>']))
+        except ValueError:
+            print("Invalid argument")
+
+    @docopt_cmd
+    def do_rename_person(self, arg):
+        """Usage: rename_person <old_fname_lname> <new_fname_lname>"""
+        try:
+            print(self.amity.rename_person(arg['<old_fname_lname>'], \
+            arg['<new_fname_lname>']))
+        except ValueError:
+            print("Invalid argument")
+
+    @docopt_cmd
+    def do_rename_room(self, arg):
+        """Usage: rename_room <old_room_name> <new_room_name>"""
+        try:
+            print(self.amity.rename_room(arg['<old_room_name>'], \
+            arg['<new_room_name>']))
+        except ValueError:
+            print("Invalid argument")
+
+    @docopt_cmd
+    def do_deallocate_person(self, arg):
+        """Usage: deallocate_person <fname_lname> <room_type>"""
+        try:
+            print(self.amity.deallocate_person(arg['<fname_lname>'], \
+            arg['<room_type>'].lower))
+        except ValueError:
+            print("Invalid argument")
+
+    @docopt_cmd
+    def do_empty_room(self, arg):
+        """Usage: empty_room <room_name>"""
+        try:
+            print(self.amity.empty_room(arg['<room_name>']))
+        except ValueError:
+            print("Invalid argument")
+
+    @docopt_cmd
+    def do_allocate_office(self, arg):
+        """Usage: allocate_office <fname_lname>"""
+        try:
+            print(self.amity.allocate_person_office(\
+            arg['<fname_lname>'].replace("_", " ")))
+        except ValueError:
+            print("Load state first")
+
+    @docopt_cmd
+    def do_allocate_livingspace(self, arg):
+        """Usage: allocate_livingspace <fname_lname>"""
+        try:
+            print(self.amity.allocate_person_livingspace(\
+            arg['<fname_lname>'].replace("_", " ")))
+        except ValueError:
+            print("Load state first")
+
+    @docopt_cmd
     def do_reset(self, arg):
         """Usage: reset"""
         os.system('clear')
@@ -187,6 +264,12 @@ class AmityCli(cmd.Cmd):
         self.amity.space = {}
         self.amity.reallocation = []
         self.amity.reallocat = []
+        self.amity.remove_people = []
+        self.amity.remove_rooms = []
+        self.amity.rename_people = []
+        self.amity.rename_rooms = []
+        self.amity.empty_rooms = []
+        self.amity.deallocated = []
         self.amity.changes = False
         print(introd)
         AmityCli().cmdloop()

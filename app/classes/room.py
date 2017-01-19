@@ -9,3 +9,9 @@ class Room():
 
     def __init__(self):
         """Creates a room"""
+
+    def delete(self, name):
+        """Deletes room from database"""
+        deleted = session.query(RoomModel).filter_by(room_name=name).first()
+        session.delete(deleted)
+        session.commit()

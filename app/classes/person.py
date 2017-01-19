@@ -2,6 +2,7 @@
 from app.models.models import *
 from datetime import datetime
 import sys
+
 class Person():
     """Class for person"""
     name = ''
@@ -19,9 +20,15 @@ class Person():
             self.accomodate = True
 
     def add_persons(self, names, pos, accomodation):
+        """Adds person to database"""
         if accomodation == "":
             accomodation = "N"
         person = PersonModel(name = names, position = pos, \
         accomodate = accomodation, dateAdded = datetime.now())
         session.add(person)
+        session.commit()
+
+    def delete_persons(self, names):
+        deleted = session.query(PersonModel).filter_by(name=names).first()
+        session.delete(deleted)
         session.commit()
