@@ -137,11 +137,6 @@ class Tester(TestCase):
         am.load_state("amity")
         self.assertEqual(am.load(), "Successfully loaded.")
 
-    def test_load_before_load_state(self):
-        """Tests for load befroe load_state"""
-        am = Amity()
-        self.assertEqual(am.load(), "Load state first before loading people.")
-
     def test_print_allocations(self):
         """Tests for print_allocations success"""
         am = Amity()

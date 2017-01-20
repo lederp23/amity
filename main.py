@@ -76,9 +76,6 @@ def docopt_cmd(func):
     fn.__dict__.update(func.__dict__)
     return fn
 
-
-
-
 class AmityCli(cmd.Cmd):
     amity = Amity()
     amity.load_state("amity")
@@ -99,6 +96,13 @@ class AmityCli(cmd.Cmd):
         try:
             print(self.amity.add_person(arg['<fname_lname>'], \
             arg['<type>'].upper(), arg['--wants_accommodation']))
+            print(self.amity.allocate_person_office(arg['<fname_lname>']\
+            .replace("_", " ")))
+            if arg['<type>'].upper() == "FELLOW" and \
+            arg['--wants_accommodation'] == "Y":
+                print(\
+                self.amity.allocate_person_livingspace(arg['<fname_lname>']\
+                .replace("_", " ")))
         except ValueError:
             print("Invalid argument")
 
@@ -283,5 +287,5 @@ if opt['--interactive']:
     try:
         AmityCli().cmdloop()
     except KeyboardInterrupt:
-        print(colored("\nKeyboard Interrupt"), "yellow")
-    AmityCli().cmdloop()
+        print("\nKeyboard Interrupt")
+        exit()

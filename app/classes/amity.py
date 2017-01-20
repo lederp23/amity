@@ -185,41 +185,34 @@ class Amity:
 
     def load(self):
         """Loads people from txt file"""
+        accomodate = ""
+        individual = []
         try:
-            accomodate = ""
-            individual = []
-            try:
-                names = open('names.txt', 'r')
-                self.details = names.readlines()
-                for person in self.details:
-                    person.replace(r"\n", "")
-                    individual = person.strip().split(" ")
-                    name = individual[0] + " " + individual[1]
-                    types = individual[2]
-                    if len(individual) < 4:
-                        accomodate = "N"
-                    else:
-                        accomodate = individual[3]
-                    exists = False
-                    accom = ""
-                    for person in self.people:
-                        if name == person['person']:
-                            types = person['types']
-                            accom = person['accomodate']
-                            exists = True
-                    if not exists:
-                        print(self.add_person(name, types, accomodate))
-                        print(self.allocate_person_office(name))
-                        if types == "FELLOW":
-                            if accomodate == "Y":
-                                print(self.allocate_person_livingspace(name))
-                    else:
-                        print(name + " has already been added.")
-                return "Successfully loaded."
-            except FileNotFoundError:
-                return "names.txt not found."
-        except ValueError:
-            return "Load state first before loading people."
+            names = open('names.txt', 'r')
+            self.details = names.readlines()
+            for person in self.details:
+                person.replace(r"\n", "")
+                individual = person.strip().split(" ")
+                name = individual[0] + " " + individual[1]
+                types = individual[2]
+                if len(individual) < 4:
+                    accomodate = "N"
+                else:
+                    accomodate = individual[3]
+                exists = False
+                accom = ""
+                for person in self.people:
+                    if name == person['person']:
+                        types = person['types']
+                        accom = person['accomodate']
+                        exists = True
+                if not exists:
+                    print(self.add_person(name, types, accomodate))
+                else:
+                    print(name + " has already been added.")
+            return "Successfully loaded."
+        except FileNotFoundError:
+            return "names.txt not found."
 
     def allocate_person_office(self, name):
         """Allocates offices"""
