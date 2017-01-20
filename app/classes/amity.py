@@ -15,6 +15,7 @@ from app.models.models import *
 
 class Amity:
     """Contains main functions"""
+    loaded = False
     details = []
     new_rooms = []
     new_persons = []
@@ -30,11 +31,6 @@ class Amity:
     space = {}
     reallocation = []
     reallocat = []
-    remove_people = []
-    remove_rooms = []
-    rename_people = []
-    rename_rooms = []
-    empty_rooms = []
     deallocated = []
     changes = False
 
@@ -62,14 +58,9 @@ class Amity:
                     " can only be office or livingspace"
         return msg
 
-    def add_person(self, name, pos, accomodation):
+    def add_person(self, fname, lname, pos, accomodation):
         """Adds person"""
-        if "_" in name:
-            name = name.replace("_", " ")
-        elif " " in name:
-            pass
-        else:
-            return "Both first name and last name are required"
+        name = fname + " " + lname
         found = False
         for guy in self.people:
             if guy['person'] == name:
@@ -94,15 +85,16 @@ class Amity:
             else:
                 return "Wrong input. Can only be FELLOW or STAFF"
 
-    def reallocate(self, person, room):
+    def reallocate(self, fname, lname, room):
         """Reassigns a person to a different room"""
         pos = ""
         accomodate = "N"
         current_room = ""
         new_room = ""
         found = False
+        room_found = False
         msg = ""
-        person = person.replace("_", " ")
+        person = fname + " " + lname
         new_type = ""
         for persons in self.people:
             if persons['person'] == person:
@@ -116,17 +108,23 @@ class Amity:
             if not current_room == room:
                 for roomy in self.rooms:
                     if roomy['room'] == room:
+                        room_found = True
                         if self.space[roomy['room']] > 0:
-                            self.reallocat.append({'current': current_room,\
-                                            'new': room, 'person': person})
-                            self.space[room] -= 1
-                            self.space[current_room] += 1
-                            msg = person + " has been reallocated to " + room
-                            self.changes = True
+                            try:
+                                self.space[room] -= 1
+                                self.space[current_room] += 1
+                                self.reallocat.append({'current': current_room,\
+                                                'new': room, 'person': person})
+                                msg = person + " has been reallocated to " + room
+                                self.changes = True
+                            except KeyError:
+                                return "Person had not been allocated a room"
                             break
                         else:
                             return room + " is full."
                         break
+                if not room_found:
+                    msg = room + " does not exist."
             else:
                 msg = person + " has already been allocated to " + room
         else:
@@ -166,7 +164,7 @@ class Amity:
         assigned = False
         unallocated += "\n-----------------------\n"
         unallocated += "Unallocated livingspace\n"
-        unallocated += "-----------------------\n"
+        unallocated += "-----------------------"
         for person in self.people:
             assigned = False
             for alloc in self.livingspace:
@@ -185,9 +183,9 @@ class Amity:
 
     def load(self):
         """Loads people from txt file"""
-        try:
-            accomodate = ""
-            individual = []
+        accomodate = ""
+        individual = []
+        if self.loaded:
             try:
                 names = open('names.txt', 'r')
                 self.details = names.readlines()
@@ -208,22 +206,20 @@ class Amity:
                             accom = person['accomodate']
                             exists = True
                     if not exists:
-                        print(self.add_person(name, types, accomodate))
-                        print(self.allocate_person_office(name))
-                        if types == "FELLOW":
-                            if accomodate == "Y":
-                                print(self.allocate_person_livingspace(name))
+                        print(self.add_person(name.split(" ")[0], \
+                        name.split(" ")[1], types, accomodate))
                     else:
                         print(name + " has already been added.")
                 return "Successfully loaded."
             except FileNotFoundError:
                 return "names.txt not found."
-        except ValueError:
-            return "Load state first before loading people."
+        else:
+            return "Load state first"
 
-    def allocate_person_office(self, name):
+    def allocate_person_office(self, fname, lname):
         """Allocates offices"""
         found = False
+        name = fname + " " + lname
         for persons in self.people:
             if persons['person'] == name:
                 found = True
@@ -258,45 +254,49 @@ class Amity:
             else:
                 return name + " has already been allocated an office."
         else:
-            return "Person does not exist"
+            return "Person does not exist. Cannot allocate office."
 
-    def allocate_person_livingspace(self, name):
+    def allocate_person_livingspace(self, fname, lname):
         """Allocates living spaces"""
+        name = fname + " " + lname
+        found = False
+        types = ""
         for persons in self.people:
             if persons['person'] == name:
                 found = True
-        for persons in self.people:
-            if persons['person'] == name:
-                found = True
+                types = persons['types']
         if found:
-            if not name in self.allocated_living:
-                room_number = randint(0, (len(self.livingspace)-1))
-                current_room = self.livingspace[room_number]
-                if len(self.livingspace_with_space) < 1:
-                        print("There is no livingspace with space")
-                else:
-                    if self.space[current_room['room']] > 0:
-                        new_occupants = current_room['occupants'] + name
-                        current_room['occupants'] = new_occupants
-                        self.space[current_room['room']] -= 1
-                        self.livingspace[room_number] = current_room
-                        self.allocations.append({'room':\
-                        current_room['room'], 'occupant': name})
-                        self.allocated_living.append(name)
-                        self.changes = True
-                        return "Successfully allocated " + name + " to "\
-                        + current_room['room']
+            if not types == "STAFF":
+                if not name in self.allocated_living:
+                    room_number = randint(0, (len(self.livingspace)-1))
+                    current_room = self.livingspace[room_number]
+                    if len(self.livingspace_with_space) < 1:
+                            print("There is no livingspace with space")
                     else:
-                        try:
-                            self.livingspace_with_space.remove(\
-                                current_room['room'])
-                            self.allocate_person_livingspace(name)
-                        except ValueError:
-                            pass
+                        if self.space[current_room['room']] > 0:
+                            new_occupants = current_room['occupants'] + name
+                            current_room['occupants'] = new_occupants
+                            self.space[current_room['room']] -= 1
+                            self.livingspace[room_number] = current_room
+                            self.allocations.append({'room':\
+                            current_room['room'], 'occupant': name})
+                            self.allocated_living.append(name)
+                            self.changes = True
+                            return "Successfully allocated " + name + " to "\
+                            + current_room['room']
+                        else:
+                            try:
+                                self.livingspace_with_space.remove(\
+                                    current_room['room'])
+                                self.allocate_person_livingspace(name)
+                            except ValueError:
+                                pass
+                else:
+                    return name + " has already been allocated a living space."
             else:
-                return name + " has already been allocated a living space."
+                return "Living spaces are for fellows only"
         else:
-            return "Person does not exist"
+            return "Person does not exist. Cannot allocate living space."
 
 
     def load_state(self, db):
@@ -316,11 +316,6 @@ class Amity:
         self.space = {}
         self.reallocation = []
         self.reallocat = []
-        self.remove_people = []
-        self.remove_rooms = []
-        self.rename_people = []
-        self.rename_rooms = []
-        self.empty_rooms = []
         self.deallocated = []
         engine = create_engine(\
         "sqlite:///app/database/" \
@@ -361,6 +356,7 @@ class Amity:
                  person.position, 'accomodate': person.accomodate})
             self.rooms = self.offices + self.livingspace
             self.changes = False
+            self.loaded = True
             return "Successfully loaded."
         except OperationalError:
             return db + " does not exist."
@@ -369,50 +365,13 @@ class Amity:
         """Writes changes to database"""
         if self.changes:
             self.changes = False
+            self.loaded = False
             engine = create_engine(\
             "sqlite:///app/database/" \
             + ("amity" if db == None else db) + ".db")
             session = sessionmaker(bind=engine)
             new_session = session()
             Base.metadata.create_all(engine)
-            for person in self.remove_people:
-                delete = Person(person['name'], "","")
-                delete.delete_persons(person['name'])
-                delete = Fellow(person['name'], "","")
-                delete.delete(person['name'])
-                delete = Staff(person['name'], "","")
-                delete.delete(person['name'])
-            for room in self.remove_rooms:
-                delete = Room()
-                delete.delete(room['name'])
-            for person in self.rename_people:
-                stmt = update(PersonModel).\
-                where(PersonModel.name == person['old']).\
-                values({'name': person['new']})
-                new_session.execute(stmt)
-                new_session.commit()
-                stmt = update(FellowModel).\
-                where(FellowModel.name == person['old']).\
-                values({'name': person['new']})
-                new_session.execute(stmt)
-                new_session.commit()
-                stmt = update(StaffModel).\
-                where(StaffModel.name == person['old']).\
-                values({'name': person['new']})
-                new_session.execute(stmt)
-                new_session.commit()
-            for room in self.rename_rooms:
-                stmt = update(RoomModel).\
-                where(RoomModel.room_name == room['old']).\
-                values({'room_name': room['new']})
-                new_session.execute(stmt)
-                new_session.commit()
-            for room in self.empty_rooms:
-                stmt = update(RoomModel).\
-                where(RoomModel.room_name == room['name']).\
-                values({'occuppants': "", 'space': RoomModel.maximum_capacity})
-                new_session.execute(stmt)
-                new_session.commit()
             for person in self.deallocated:
                 current_room = ""
                 new_occupants = ""
@@ -485,6 +444,13 @@ class Amity:
                 new_session.execute(stmt)
                 new_session.commit()
                 self.changes = False
+                self.loaded = False
+            for room in self.rooms:
+                stmt = update(RoomModel).where(\
+                    RoomModel.room_name==room['room'])\
+                    .values({'occuppants': room['occupants']})
+                new_session.execute(stmt)
+                new_session.commit()
             return "Successfully saved."
         else:
             return "No changes have been made for saving."
@@ -493,148 +459,30 @@ class Amity:
         """Prints list of people in room"""
         found = False
         people_list = ""
+        people_list += (room + "\n")
         for rooms in self.offices:
             if rooms['room'] == room:
-                people_list += (rooms['occupants'][1:].replace(",", "\n"))
+                if len(rooms['occupants']) > 0:
+                    people_list += (rooms['occupants'][1:].replace(",", "\n"))
+                else:
+                    people_list = room + " is empty."
                 found = True
         for rooms in self.livingspace:
             if rooms['room'] == room:
-                people_list += (rooms['occupants'][1:].replace(",", "\n"))
+                if len(rooms['occupants']) > 0:
+                    people_list += (rooms['occupants'][1:].replace(",", "\n"))
+                else:
+                    people_list = room + " is empty."
                 found = True
         if not found:
             return "Room not found"
         else:
             return people_list
 
-    def remove_person(self, name):
-        """Removes person"""
-        if "_" in name:
-            name = name.replace("_", " ")
-        else:
-            return "Wrong name format"
-        found = False
-        for guy in self.people:
-            if guy['person'] == name:
-                found = True
-        if not found:
-            return name + " does not exist"
-        else:
-            self.remove_people.append({"name": name})
-            for person in self.people:
-                if person['person'] == name:
-                    self.people.remove(person)
-            self.changes = True
-            return "Successfully removed " + name
-
-    def remove_room(self, name):
-        """Removes room"""
-        found = False
-        for room in self.rooms:
-            if room['room'] == name:
-                found = True
-        if not found:
-            return name + " does not exist"
-        else:
-            self.remove_rooms.append({"name": name})
-            for room in self.rooms:
-                if room['room'] == name:
-                    self.rooms.remove(room)
-            for room in self.offices:
-                if room['room'] == name:
-                    self.offices.remove(room)
-            for room in self.livingspace:
-                if room['room'] == name:
-                    self.livingspace.remove(room)
-            self.changes = True
-            return "Successfully removed " + name
-
-    def rename_person(self, old, new):
-        """Renames person"""
-        if "_" in old and "_" in new:
-            old = old.replace("_", " ")
-            new = new.replace("_", " ")
-        else:
-            return "Wrong name format"
-        found = False
-        exists = False
-        for guy in self.people:
-            if guy['person'] == old:
-                found = True
-            if guy['person'] == new:
-                exists = True
-        if not found:
-            return old + " does not exist"
-        else:
-            if not exists:
-                self.rename_people.append({"old": old, "new": new})
-                for person in self.people:
-                    if person['person'] == old:
-                        person['person'] = new
-                self.changes = True
-                return "Successfully renamed"
-            else:
-                return "Name already in use"
-
-    def rename_room(self, old, new):
-        """Renames room"""
-        found = False
-        exists = False
-        for room in self.rooms:
-            if room['room'] == old:
-                found = True
-            if room['room'] == new:
-                exists = True
-        if not found:
-            return old + " does not exist"
-        else:
-            if not exists:
-                self.rename_rooms.append({"old": old, "new": new})
-                for room in self.rooms:
-                    if room['room'] == old:
-                        room['room'] = new
-                for room in self.offices:
-                    if room['room'] == old:
-                        room['room'] = new
-                for room in self.livingspace:
-                    if room['room'] == old:
-                        room['room'] = new
-                self.changes = True
-                return "Successfully renamed"
-            else:
-                "Name already in use"
-
-    def empty_room(self, name):
-        """Empties room"""
-        found = False
-        for room in self.rooms:
-            if room['room'] == name:
-                found = True
-        if not found:
-            return name + " does not exist"
-        else:
-            self.empty_rooms.append({"name": name})
-            for room in self.rooms:
-                if room['room'] == name:
-                    if not room['occupants'] == "":
-                        room['occupants'] = ""
-                        for room in self.offices:
-                            if room['room'] == name:
-                                room['occupants'] = ""
-                        for room in self.livingspace:
-                            if room['room'] == name:
-                                room['occupants'] = ""
-                    else:
-                        return name + " is already empty"
-            self.changes = True
-            return "Successfully emptied " + name
-
-    def deallocate_person(self, name, types):
+    def deallocate_person(self, fname, lname, types):
         """Removes person from rooms"""
         exists = False
-        if "_" in name:
-            name = name.replace("_", " ")
-        else:
-            return "Wrong name format"
+        name = fname + " " + lname
         found = False
         for guy in self.people:
             if guy['person'] == name:

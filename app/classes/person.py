@@ -1,6 +1,6 @@
 """Person class module"""
 from datetime import datetime
-
+from sqlalchemy.orm.exc import UnmappedInstanceError
 from app.models.models import *
 
 class Person():
@@ -29,6 +29,10 @@ class Person():
         session.commit()
 
     def delete_persons(self, names):
-        deleted = session.query(PersonModel).filter_by(name=names).first()
-        session.delete(deleted)
-        session.commit()
+        """Deletes person from database"""
+        try:
+            deleted = session.query(PersonModel).filter_by(name=names).first()
+            session.delete(deleted)
+            session.commit()
+        except UnmappedInstanceError:
+            pass
