@@ -1,4 +1,7 @@
 """Room class module"""
+from app.models.models import *
+from sqlalchemy.orm.exc import UnmappedInstanceError
+
 class Room():
     """Class for rooms in Amity"""
     maximum_capacity = 0
@@ -11,6 +14,9 @@ class Room():
 
     def delete(self, name):
         """Deletes room from database"""
-        deleted = session.query(RoomModel).filter_by(room_name=name).first()
-        session.delete(deleted)
-        session.commit()
+        try:
+            deleted = session.query(RoomModel).filter_by(room_name=name).first()
+            session.delete(deleted)
+            session.commit()
+        except UnmappedInstanceError:
+            pass
