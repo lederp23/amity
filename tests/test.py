@@ -1,6 +1,7 @@
 """Test class module"""
 from unittest import TestCase
 from unittest.mock import patch
+
 from app.classes.person import Person
 from app.classes.amity import Amity
 from app.classes.room import Room

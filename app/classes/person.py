@@ -1,7 +1,7 @@
 """Person class module"""
-from app.models.models import *
 from datetime import datetime
-import sys
+
+from app.models.models import *
 
 class Person():
     """Class for person"""

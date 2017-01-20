@@ -34,9 +34,10 @@ import os
 import time
 from docopt import docopt, DocoptExit
 from colorama import init
-from app.classes.amity import Amity
 from pyfiglet import Figlet
 from termcolor import colored
+
+from app.classes.amity import Amity
 
 init()
 font = Figlet(font = 'starwars')
@@ -80,6 +81,7 @@ def docopt_cmd(func):
 
 class AmityCli(cmd.Cmd):
     amity = Amity()
+    amity.load_state("amity")
     prompt = 'Amity>> '
     file = None
 

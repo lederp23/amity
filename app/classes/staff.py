@@ -1,10 +1,9 @@
 """Staff class module"""
-from app.classes.person import Person
-from app.models.models import *
+from datetime import datetime
 from sqlalchemy.orm.exc import UnmappedInstanceError
 
-from datetime import datetime
-import sys
+from app.classes.person import Person
+from app.models.models import *
 
 class Staff(Person):
     """Class for staff"""
