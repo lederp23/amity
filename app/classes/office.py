@@ -1,7 +1,7 @@
 """Office class module"""
 from app.classes.room import Room
 from app.models.models import *
-import sys
+
 class Office(Room):
     """Class for offices"""
     def __init__(self, room, types):

@@ -1,9 +1,9 @@
 """Fellow class module"""
-import sys
 from sqlalchemy.orm.exc import UnmappedInstanceError
+from datetime import datetime
+
 from app.classes.person import Person
 from app.models.models import *
-from datetime import datetime
 
 class Fellow(Person):
     """Class for fellows"""

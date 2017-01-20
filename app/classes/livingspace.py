@@ -1,5 +1,4 @@
 """LivingSpace class module"""
-import sys
 from app.classes.room import Room
 from app.models.models import *
 

@@ -4,6 +4,7 @@ from collections import defaultdict
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, update
 from sqlalchemy.exc import OperationalError
+
 from app.classes.fellow import *
 from app.classes.livingspace import *
 from app.classes.office import *
@@ -151,11 +152,27 @@ class Amity:
         """Prints list of unallocated people"""
         unallocated = ""
         assigned = False
+        unallocated += "------------------\n"
+        unallocated += "Unallocated office\n"
+        unallocated += "------------------"
         for person in self.people:
             assigned = False
-            for alloc in self.rooms:
-                if person['person'] in alloc['occupants']:
+            for alloc in self.offices:
+                if not alloc['occupants'].find(person['person']) == -1:
                     assigned = True
+                    break
+            if not assigned:
+                unallocated += ("\n" + person['person'])
+        assigned = False
+        unallocated += "\n-----------------------\n"
+        unallocated += "Unallocated livingspace\n"
+        unallocated += "-----------------------\n"
+        for person in self.people:
+            assigned = False
+            for alloc in self.livingspace:
+                if not alloc['occupants'].find(person['person']) == -1:
+                    assigned = True
+                    break
             if not assigned:
                 unallocated += ("\n" + person['person'])
         files = open(("unallocated" if option == None else option) + ".txt", "w")
@@ -306,7 +323,7 @@ class Amity:
         self.empty_rooms = []
         self.deallocated = []
         engine = create_engine(\
-        "sqlite:////Users/olivermunala/Desktop/Amity/amity/app/database/" \
+        "sqlite:///app/database/" \
         + db + ".db")
         session = sessionmaker(bind=engine)
         new_session = session()
@@ -353,7 +370,7 @@ class Amity:
         if self.changes:
             self.changes = False
             engine = create_engine(\
-            "sqlite:////Users/olivermunala/Desktop/Amity/amity/app/database/" \
+            "sqlite:///app/database/" \
             + ("amity" if db == None else db) + ".db")
             session = sessionmaker(bind=engine)
             new_session = session()

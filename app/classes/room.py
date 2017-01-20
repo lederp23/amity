@@ -1,5 +1,4 @@
 """Room class module"""
-import sys
 class Room():
     """Class for rooms in Amity"""
     maximum_capacity = 0
