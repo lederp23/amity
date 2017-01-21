@@ -18,8 +18,9 @@ class TestAddingPerson(TestCase):
 
     def test_successfully_adding_person(self):
         """Tests for adding person successfully"""
-        self.assertEqual(self.amity.add_person(\
-        "Ngoitsi", "Oliver", "FELLOW", "N"),"Successfully added Ngoitsi Oliver")
+        self.assertEqual(self.amity.add_person("Ngoitsi", "Oliver",\
+                                               "FELLOW", "N"),\
+                         "Successfully added Ngoitsi Oliver")
 
     def test_adding_person_who_exists_in_amity(self):
         """Tests for adding person who has already been added"""
@@ -30,8 +31,8 @@ class TestAddingPerson(TestCase):
 
     def test_adding_person_with_invalid_position(self):
         """Tests adding person who's position is not staff or fellow"""
-        self.assertEqual(self.amity.add_person("Munlaz", "Verulo", "st", "N"), \
-        "Wrong input. Can only be FELLOW or STAFF")
+        self.assertEqual(self.amity.add_person("Munlaz", "Verulo", "st", "N"),\
+                         "Wrong input. Can only be FELLOW or STAFF")
 
 
 class TestAddingRoom(TestCase):
@@ -42,21 +43,21 @@ class TestAddingRoom(TestCase):
     def test_successfully_adding_room(self):
         """Tests for adding room successfully"""
         with patch('builtins.input', return_value='office'):
-            self.assertEqual(self.amity.create_room(["Roundtable"]), \
-                            "\nSuccessfully added Roundtable")
+            self.assertEqual(self.amity.create_room(["Roundtable"]),\
+                             "\nSuccessfully added Roundtable")
 
     def test_adding_room_that_exists_in_amity(self):
         """Tests for adding room that already exists"""
         with patch('builtins.input', return_value='office'):
             self.amity.load_state("amity")
-            self.assertEqual(self.amity.create_room(["Valhalla"]), \
-                            "Valhalla already exists")
+            self.assertEqual(self.amity.create_room(["Valhalla"]),\
+                             "Valhalla already exists")
 
     def test_adding_room_with_wrong_room_type(self):
         """Tests for adding room with wrong room type"""
         with patch('builtins.input', return_value='off'):
-            self.assertEqual(self.amity.create_room(["Roundtable"]), \
-                            "\nRoundtable can only be office or livingspace")
+            self.assertEqual(self.amity.create_room(["Roundtable"]),\
+                             "\nRoundtable can only be office or livingspace")
 
 class TestAllocatingRoom(TestCase):
     """Holds all tests for allocating rooms"""
@@ -66,43 +67,50 @@ class TestAllocatingRoom(TestCase):
     def test_allocatiing_office_successfully(self):
         """Tests for allocating an office successfully"""
         self.amity.load_state("amity")
-        self.assertIn("Successfully allocated KEVIN MUNALA", \
+        self.assertIn("Successfully allocated KEVIN MUNALA",\
                       self.amity.allocate_person_office("KEVIN", "MUNALA"))
 
     def test_allocating_office_to_already_allocated_person(self):
-        """Tests for allocating an office to a person who has an office already"""
+        """
+        Tests for allocating an office to a person who has an office already
+        """
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.allocate_person_office("TANA", "LOPEZ"), \
+        self.assertEqual(self.amity.allocate_person_office("TANA", "LOPEZ"),\
                          "TANA LOPEZ has already been allocated an office.")
 
     def test_allocating_office_to_person_who_does_not_exist(self):
         """Tests for allocatin an office to person who does not exist"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.allocate_person_office("TANA", "aLOPEZ"), \
+        self.assertEqual(self.amity.allocate_person_office("TANA", "aLOPEZ"),\
                          "Person does not exist. Cannot allocate office.")
 
     def test_allocatiing_livingspace_successfully(self):
         """Tests for allocating a livingspace successfully"""
         self.amity.load_state("amity")
-        self.assertIn("Successfully allocated Oliver Munala", \
-                      self.amity.allocate_person_livingspace("Oliver", "Munala"))
+        self.assertIn("Successfully allocated Oliver Munala",\
+                      self.amity.allocate_person_livingspace("Oliver",\
+                                                             "Munala"))
 
     def test_allocating_livingspace_to_already_allocated_person(self):
-        """Tests for allocating a livingspace to a person who has an office already"""
+        """
+        Tests for allocating a livingspace to person who has an office already
+        """
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.allocate_person_livingspace("me", "yous"), \
+        self.assertEqual(self.amity.allocate_person_livingspace("me", "yous"),\
                          "me yous has already been allocated a living space.")
 
     def test_allocating_livingspace_to_person_who_does_not_exist(self):
         """Tests for allocatin a livingspace to person who does not exist"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.allocate_person_livingspace("TANA", "aLOPEZ"), \
+        self.assertEqual(self.amity.allocate_person_livingspace("TANA",\
+                                                                "aLOPEZ"),\
                          "Person does not exist. Cannot allocate living space.")
 
     def test_allocating_livingspace_to_staff(self):
         """Tests for allocatin a livingspace to staff member"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.allocate_person_livingspace("Giddy", "Gitau"), \
+        self.assertEqual(self.amity.allocate_person_livingspace("Giddy",\
+                                                                "Gitau"),\
                          "Living spaces are for fellows only")
 
 class TestReallocatingRoom(TestCase):
@@ -113,32 +121,34 @@ class TestReallocatingRoom(TestCase):
     def test_reallocating_person_successfully(self):
         """Tests for reallocating person successfully"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("TANA", "LOPEZ", "Occulus"), \
+        self.assertEqual(self.amity.reallocate("TANA", "LOPEZ", "Occulus"),\
                          "TANA LOPEZ has been reallocated to Occulus")
 
     def test_reallocating_person_to_full_room(self):
         """Tests for reallocating person to a room with no space"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("TANA", "LOPEZ", "Valhalla"), \
+        self.assertEqual(self.amity.reallocate("TANA", "LOPEZ", "Valhalla"),\
                          "Valhalla is full.")
 
     def test_reallocating_person_to_missing_room(self):
         """Tests for reallocating person to a room that does not exist"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("TANA", "LOPEZ", "hsssog"), \
+        self.assertEqual(self.amity.reallocate("TANA", "LOPEZ", "hsssog"),\
                          "hsssog does not exist.")
 
     def test_reallocating_person_who_does_not_exist(self):
         """Tests for reallocating person who does not exist"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("TANA", "LOPEDZ", "Valhalla"), \
+        self.assertEqual(self.amity.reallocate("TANA", "LOPEDZ", "Valhalla"),\
                          "Person does not exist")
 
     def test_already_allocated_person_to_current_room(self):
         """Tests for reallocating person to his/her current room"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("Olivers", "Munala", "Hogwarts"), \
-                         "Olivers Munala has already been allocated to Hogwarts")
+        self.assertEqual(self.amity.reallocate("Olivers", "Munala",\
+                                               "Hogwarts"),\
+                         "Olivers Munala has already" + \
+                         " been allocated to Hogwarts")
 
 class TestLoadingPeople(TestCase):
     """Holds all tests for loading people"""
@@ -218,23 +228,27 @@ class TestDeallocatingPerson(TestCase):
     def test_deallocating_person_successfully(self):
         """Test for removing person from rooms successfully"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.deallocate_person("Olivers", "Munala", "office"), \
-        "Successfully deallocated Olivers Munala")
+        self.assertEqual(self.amity.deallocate_person("Olivers", "Munala",\
+                                                      "office"),\
+                         "Successfully deallocated Olivers Munala")
 
     def test_deallocating_missing_person(self):
         """Test for removing person who does not exist from rooms"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.deallocate_person("Olivers", "Munalas", "office"), \
-        "Olivers Munalas does not exist")
+        self.assertEqual(self.amity.deallocate_person("Olivers", "Munalas",\
+                                                      "office"),\
+                         "Olivers Munalas does not exist")
 
     def test_deallocating_person_with_invalid_room_type(self):
         """Test for removing person from rooms with wrong room type"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.deallocate_person("Olivers", "Munala", "off"), \
-        "Wrong room type")
+        self.assertEqual(self.amity.deallocate_person("Olivers", "Munala",\
+                                                      "off"),\
+                         "Wrong room type")
 
     def test_deallocate_person_who_is_not_allocated(self):
         """Test for removing person who is not allocated"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.deallocate_person("KEVIN", "MUNALA", "office"), \
-        "KEVIN MUNALA has not been allocated")
+        self.assertEqual(self.amity.deallocate_person("KEVIN", "MUNALA",\
+                                                      "office"),\
+                         "KEVIN MUNALA has not been allocated")

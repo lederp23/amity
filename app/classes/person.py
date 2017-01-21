@@ -23,16 +23,17 @@ class Person():
         """Adds person to database"""
         if accomodation == "":
             accomodation = "N"
-        person = PersonModel(name = names, position = pos, \
-        accomodate = accomodation, dateAdded = datetime.now())
+        person = PersonModel(name=names, position=pos,\
+                             accomodate=accomodation,\
+                             dateAdded=datetime.now())
         session.add(person)
         session.commit()
 
     def delete_persons(self, names):
         """Deletes person from database"""
         try:
-            deleted = session.query(PersonModel).filter_by(name=names).first()
-            session.delete(deleted)
+            person = session.query(PersonModel).filter_by(name=names).first()
+            session.delete(person)
             session.commit()
         except UnmappedInstanceError:
             pass

@@ -15,8 +15,8 @@ class Room():
     def delete(self, name):
         """Deletes room from database"""
         try:
-            deleted = session.query(RoomModel).filter_by(room_name=name).first()
-            session.delete(deleted)
+            room = session.query(RoomModel).filter_by(room_name=name).first()
+            session.delete(room)
             session.commit()
         except UnmappedInstanceError:
             pass

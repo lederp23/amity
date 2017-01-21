@@ -13,15 +13,15 @@ class Fellow(Person):
 
     def add(self, name):
         """Adds fellow to database"""
-        fellow = FellowModel(name = name, dateAdded = datetime.now())
+        fellow = FellowModel(name=name, dateAdded=datetime.now())
         session.add(fellow)
         session.commit()
 
     def delete(self, names):
         """Deletes fellow from database"""
         try:
-            deleted = session.query(FellowModel).filter_by(name=names).first()
-            session.delete(deleted)
+            person = session.query(FellowModel).filter_by(name=names).first()
+            session.delete(person)
             session.commit()
         except UnmappedInstanceError:
             pass
