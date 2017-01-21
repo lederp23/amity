@@ -136,7 +136,7 @@ class AmityCli(cmd.Cmd):
         """
         try:
             if not arg['--o'] == None:
-                if len(arg['--o'])>0:
+                if len(arg['--o']) > 0:
                     print(self.amity.print_allocations(arg['--o']))
                 else:
                     print("Add a file name when using --o.")
@@ -152,7 +152,7 @@ class AmityCli(cmd.Cmd):
         """
         try:
             if not arg['--o'] == None:
-                if len(arg['--o'])>0:
+                if len(arg['--o']) > 0:
                     print(self.amity.print_unallocated(arg['--o']))
                 else:
                     print("Add a file name when using --o.")
@@ -178,7 +178,7 @@ class AmityCli(cmd.Cmd):
         """
         try:
             if not arg['--db'] == None:
-                if len(arg['--db'])>0:
+                if len(arg['--db']) > 0:
                     print(self.amity.save_state(arg['--db']))
                 else:
                     print("Add a database name when using --db.")

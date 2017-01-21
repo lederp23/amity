@@ -141,7 +141,7 @@ class Amity:
                 output += "\n"
                 output += (room['room'] + "\n" +\
                            ("-" * len(room['occupants'][1:])) + "\n")
-                output +=( room['occupants'][1:])
+                output += (room['occupants'][1:])
                 output += "\n"
         files = open(("allocations" if option == None else option) + ".txt",\
                      "w")
@@ -232,7 +232,7 @@ class Amity:
                 room_number = randint(0, (len(self.offices)-1))
                 current_room = self.offices[room_number]
                 if len(self.offices_with_space) < 1:
-                        return "There is no office with space"
+                    return "There is no office with space"
                 else:
                     if self.space[current_room['room']] > 0:
                         new_occupants = current_room['occupants'] + name
@@ -300,7 +300,7 @@ class Amity:
             return "Person does not exist. Cannot allocate living space."
 
 
-    def load_state(self, db):
+    def load_state(self, database):
         """Loads data from database"""
         self.new_person_details = []
         self.new_rooms = []
@@ -318,9 +318,7 @@ class Amity:
         self.reallocation = []
         self.reallocated_people = []
         self.deallocated_people = []
-        engine = create_engine(\
-        "sqlite:///app/database/" \
-        + db + ".db")
+        engine = create_engine("sqlite:///app/database/" + database + ".db")
         session = sessionmaker(bind=engine)
         new_session = session()
         database_rooms = new_session.query(RoomModel)
@@ -363,14 +361,14 @@ class Amity:
         except OperationalError:
             return db + " does not exist."
 
-    def save_state(self, db):
+    def save_state(self, database):
         """Writes changes to database"""
         if self.changes:
             self.changes = False
             self.loaded = False
-            engine = create_engine(\
-            "sqlite:///app/database/" \
-            + ("amity" if db == None else db) + ".db")
+            engine = create_engine("sqlite:///app/database/" +\
+                                  ("amity" if database == None else database) +\
+                                   ".db")
             session = sessionmaker(bind=engine)
             new_session = session()
             Base.metadata.create_all(engine)
@@ -400,7 +398,7 @@ class Amity:
                 else:
                     new_staff = Staff(person['person'],\
                                       person['position'],\
-                                      person['accomodate' ])
+                                      person['accomodate'])
                     new_staff.add(person['person'])
                     new_staff.add_persons(person['person'],\
                                           person['position'],\
@@ -438,13 +436,13 @@ class Amity:
                         new_room = room['room']
                         break
                 statement = update(RoomModel).where(\
-                    RoomModel.room_name==person['current'])\
+                    RoomModel.room_name == person['current'])\
                     .values({'occuppants': new_occupants_current,\
                              'space': self.space[current_room]})
                 new_session.execute(statement)
                 new_session.commit()
                 statement = update(RoomModel).where(\
-                            RoomModel.room_name==person['new'])\
+                            RoomModel.room_name == person['new'])\
                             .values({'occuppants': new_occupants_new,\
                                      'space': self.space[new_room]})
                 new_session.execute(statement)
@@ -453,7 +451,7 @@ class Amity:
                 self.loaded = False
             for room in self.rooms:
                 statement = update(RoomModel).where(\
-                            RoomModel.room_name==room['room'])\
+                            RoomModel.room_name == room['room'])\
                             .values({'occuppants': room['occupants']})
                 new_session.execute(statement)
                 new_session.commit()

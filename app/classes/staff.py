@@ -11,7 +11,7 @@ class Staff(Person):
 
     def add(self, name):
         """Adds Staff to database"""
-        staff = StaffModel(name = name, dateAdded = datetime.now())
+        staff = StaffModel(name=name, dateAdded=datetime.now())
         session.add(staff)
         session.commit()
 

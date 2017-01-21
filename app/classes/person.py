@@ -23,8 +23,9 @@ class Person():
         """Adds person to database"""
         if accomodation == "":
             accomodation = "N"
-        person = PersonModel(name = names, position = pos, \
-        accomodate = accomodation, dateAdded = datetime.now())
+        person = PersonModel(name=names, position=pos,\
+                             accomodate=accomodation,\
+                             dateAdded=datetime.now())
         session.add(person)
         session.commit()
 

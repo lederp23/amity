@@ -13,7 +13,7 @@ class Fellow(Person):
 
     def add(self, name):
         """Adds fellow to database"""
-        fellow = FellowModel(name = name, dateAdded = datetime.now())
+        fellow = FellowModel(name=name, dateAdded=datetime.now())
         session.add(fellow)
         session.commit()
 
