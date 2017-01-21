@@ -20,8 +20,8 @@ class Fellow(Person):
     def delete(self, names):
         """Deletes fellow from database"""
         try:
-            deleted = session.query(FellowModel).filter_by(name=names).first()
-            session.delete(deleted)
+            person = session.query(FellowModel).filter_by(name=names).first()
+            session.delete(person)
             session.commit()
         except UnmappedInstanceError:
             pass
