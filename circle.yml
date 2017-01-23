@@ -1,0 +1,15 @@
+machine:
+  python:
+    version: 3.5.3rc1
+
+dependencies:
+  pre:
+    - pip install -r requirements.txt
+
+deployment:
+  production:
+    branch: final
+    
+test:
+  override:
+    - pytest test/test.py
