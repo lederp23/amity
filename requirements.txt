@@ -16,3 +16,4 @@ six==1.10.0
 SQLAlchemy==1.1.4
 termcolor==1.1.0
 wrapt==1.10.8
+unittest==0.0
