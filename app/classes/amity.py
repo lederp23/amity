@@ -280,7 +280,8 @@ class Amity:
                             self.space[current_room['room']] -= 1
                             self.livingspace[room_number] = current_room
                             self.allocations.append(\
-                                 {'room': current_room['room'], 'occupant': name})
+                                 {'room': current_room['room'],\
+                                  'occupant': name})
                             self.allocated_living.append(name)
                             self.changes = True
                             return "Successfully allocated " + name + \
@@ -359,7 +360,7 @@ class Amity:
             self.loaded = True
             return "Successfully loaded."
         except OperationalError:
-            return db + " does not exist."
+            return database + " does not exist."
 
     def save_state(self, database):
         """Writes changes to database"""
@@ -367,8 +368,8 @@ class Amity:
             self.changes = False
             self.loaded = False
             engine = create_engine("sqlite:///app/database/" +\
-                                  ("amity" if database == None else database) +\
-                                   ".db")
+                                  ("amity" if database == None else database)\
+                                   + ".db")
             session = sessionmaker(bind=engine)
             new_session = session()
             Base.metadata.create_all(engine)
@@ -463,7 +464,9 @@ class Amity:
         """Prints list of people in room"""
         found = False
         people_list = ""
+        people_list += ("-" * len(room) + "\n")
         people_list += (room + "\n")
+        people_list += ("-" * len(room) + "\n")
         for office in self.offices:
             if office['room'] == room:
                 if len(office['occupants']) > 0:
