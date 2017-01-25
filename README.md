@@ -1,24 +1,33 @@
 Amity is a room allocation and management system for one of andela's facilities called 'Amity'
 
-Installation
+**Installation**
 
+```
 $ git clone  https://github.com/lederp23/amity.git
-
-$ cd amity/
+$ cd amity
+```
 
 Create and activate a virtual environment
 
-
+```
 $ mkvirtualenv env
+$ workon env
+```
 
-Install dependencies $ pip install -r requirements.txt
+Install dependencies
+
+```
+$ pip install -r requirements.txt
+```
 
 Run the application
 
+```
 $ python main.py -i
+```
 
-Commands
-
+**Commands**
+```
 main.py (-i | --interactive)
 main.py (-h | --help )
 Amity>> create_room <room_name>...
@@ -36,3 +45,4 @@ Amity>> deallocate_person <first_name> <last_name> <room_type>
 Amity>> quit
 Amity>> reset
 Amity>> clear
+```
