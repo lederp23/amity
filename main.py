@@ -1,20 +1,20 @@
 """
 Usage:
-  main.py create_room <room_name>...
-  main.py add_person <first_name> <last_name> <type> [--accommodate]
-  main.py reallocate_person <first_name> <last_name> <new_room_name>
-  main.py load_people
-  main.py print_allocations [--o=filename]
-  main.py print_unallocated [--o=filename]
-  main.py print_room <room_name>
-  main.py allocate_office <first_name> <last_name>
-  main.py allocate_livingspace <first_name> <last_name>
-  main.py save_state [--db=sqlite_database]
-  main.py load_state <sqlite_database>
-  main.py deallocate_person <first_name> <last_name> <room_type>
-  main.py quit
-  main.py reset
-  main.py clear
+  Amity>> create_room <room_name>...
+  Amity>> add_person <first_name> <last_name> <type> [--accommodate=N]
+  Amity>> reallocate_person <first_name> <last_name> <new_room_name>
+  Amity>> load_people
+  Amity>> print_allocations [--o=file_name]
+  Amity>> print_unallocated [--o=file_name]
+  Amity>> print_room <room_name>
+  Amity>> allocate_office <first_name> <last_name>
+  Amity>> allocate_livingspace <first_name> <last_name>
+  Amity>> save_state [--db=sqlite_database]
+  Amity>> load_state <sqlite_database>
+  Amity>> deallocate_person <first_name> <last_name> <room_type>
+  Amity>> quit
+  Amity>> reset
+  Amity>> clear
   main.py ( -h | --help)
   main.py ( -i | --interactive)
 
@@ -36,9 +36,9 @@ from app.classes.amity import Amity
 
 init()
 font = Figlet(font = 'starwars')
-introd = font.renderText('Amity')
+title = font.renderText('Amity')
 os.system('clear')
-print(introd)
+print(title)
 
 
 def docopt_cmd(func):
@@ -126,13 +126,15 @@ class AmityCli(cmd.Cmd):
 
     @docopt_cmd
     def do_load_people(self, arg):
-        """Usage: load_people"""
+        """
+        Usage: load_people
+        """
         print(self.amity.load())
 
     @docopt_cmd
     def do_print_allocations(self, arg):
         """
-        Usage: print_allocations [--o=allocations]
+        Usage: print_allocations [--o=file_name]
         """
         try:
             if not arg['--o'] == None:
@@ -148,7 +150,7 @@ class AmityCli(cmd.Cmd):
     @docopt_cmd
     def do_print_unallocated(self, arg):
         """
-        Usage: print_unallocated [--o=filename]
+        Usage: print_unallocated [--o=file_name]
         """
         try:
             if not arg['--o'] == None:
@@ -223,7 +225,7 @@ class AmityCli(cmd.Cmd):
         Usage: clear
         """
         os.system('clear')
-        print(introd)
+        print(title)
         prompt = 'Amity>> '
 
     @docopt_cmd
@@ -292,7 +294,7 @@ class AmityCli(cmd.Cmd):
         self.amity.deallocated_people = []
         self.amity.changes = False
         self.amity.loaded = False
-        print(introd)
+        print(title)
         AmityCli().cmdloop()
 
 opt = docopt(__doc__, sys.argv[1:])

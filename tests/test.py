@@ -64,7 +64,7 @@ class TestAllocatingRoom(TestCase):
     def setUp(self):
         self.amity = Amity()
 
-    def test_allocatiing_office_successfully(self):
+    def test_allocating_office_successfully(self):
         """Tests for allocating an office successfully"""
         self.amity.load_state("amity")
         self.assertIn("Successfully allocated KEVIN MUNALA",\
