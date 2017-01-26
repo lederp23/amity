@@ -90,3 +90,6 @@ amity/
 # Rope project settings
 .ropeproject
 /amity
+
+__MACOSX
+.DS_Store
