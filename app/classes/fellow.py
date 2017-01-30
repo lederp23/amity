@@ -11,17 +11,9 @@ class Fellow(Person):
     livingroom = True
 
 
-    def add(self, name):
+    def add(self, name, username):
         """Adds fellow to database"""
-        fellow = FellowModel(name=name, dateAdded=datetime.now())
+        fellow = FellowModel(name=name, dateAdded=datetime.now(),\
+                             username=username)
         session.add(fellow)
         session.commit()
-
-    def delete(self, names):
-        """Deletes fellow from database"""
-        try:
-            person = session.query(FellowModel).filter_by(name=names).first()
-            session.delete(person)
-            session.commit()
-        except UnmappedInstanceError:
-            pass
