@@ -15,6 +15,7 @@ class PersonModel(Base):
     position = Column (String(50))
     accomodate = Column (String(1))
     dateAdded = Column (DateTime())
+    username = Column (String(50))
 
 class FellowModel(Base):
     """Model for Fellow"""
@@ -22,6 +23,7 @@ class FellowModel(Base):
     id = Column(Integer, primary_key = True, autoincrement = True)
     name = Column(String(50))
     dateAdded = Column (DateTime())
+    username = Column (String(50))
 
 class StaffModel(Base):
     """Model for Staff"""
@@ -29,6 +31,7 @@ class StaffModel(Base):
     id = Column(Integer, primary_key = True, autoincrement = True)
     name = Column(String(50))
     dateAdded = Column (DateTime())
+    username = Column (String(50))
 
 class AmityModel(Base):
     """Model for Amity"""

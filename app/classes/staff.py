@@ -9,17 +9,9 @@ class Staff(Person):
     """Class for staff"""
     livingroom = False
 
-    def add(self, name):
+    def add(self, name, username):
         """Adds Staff to database"""
-        staff = StaffModel(name=name, dateAdded=datetime.now())
+        staff = StaffModel(name=name, dateAdded=datetime.now(),\
+                           username=username)
         session.add(staff)
         session.commit()
-
-    def delete(self, names):
-        """Deletes staff from database"""
-        try:
-            person = session.query(StaffModel).filter_by(name=names).first()
-            session.delete(person)
-            session.commit()
-        except UnmappedInstanceError:
-            pass
