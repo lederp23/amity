@@ -79,7 +79,8 @@ class Amity:
             else:
                 return "Invalid choice. Can only be 'Y' or 'N'."
         else:
-            return self.add_person_now(first_name, last_name, position, accomodation)
+            return self.add_person_now(first_name, last_name, position, \
+                accomodation)
 
     def add_person_now(self, first_name, last_name, position, accomodation):
         name = first_name + " " + last_name
@@ -126,7 +127,8 @@ class Amity:
                 if not roomy['occupants'].find(person) == -1:
                     current_room = roomy['room']
             if not current_room == room:
-                message = self.reallocate_person(room, current_room, person, room_found)
+                message = self.reallocate_person(room, current_room, person,\
+                          room_found)
             else:
                 if name_count > 1:
                     message = self.reallocate_person(room, current_room, person)
@@ -278,9 +280,9 @@ class Amity:
                         try:
                             self.offices_with_space.remove(\
                                  current_room['room'])
-                            self.allocate_person_office(name)
+                            self.allocate_person_office(username)
                         except ValueError:
-                            pass
+                            self.allocate_person_office(username)
             else:
                 return name + " has already been allocated an office."
         else:
@@ -302,7 +304,7 @@ class Amity:
                     room_number = randint(0, (len(self.livingspace)-1))
                     current_room = self.livingspace[room_number]
                     if len(self.livingspace_with_space) < 1:
-                        print("There is no livingspace with space")
+                        return "There is no livingspace with space"
                     else:
                         if self.space[current_room['room']] > 0:
                             new_occupants = current_room['occupants'] + ',' +\
@@ -321,9 +323,9 @@ class Amity:
                             try:
                                 self.livingspace_with_space.remove(\
                                     current_room['room'])
-                                self.allocate_person_livingspace(name)
+                                self.allocate_person_livingspace(username)
                             except ValueError:
-                                pass
+                                self.allocate_person_livingspace(username)
                 else:
                     return name + " has already been allocated a living space."
             else:
@@ -364,9 +366,9 @@ class Amity:
             room_list = database_rooms.all()
             for current_room in room_list:
                 self.space.update({current_room.room_name: current_room.space})
-                if current_room.roomType == 'office':
+                if current_room.room_type == 'office':
                     self.offices.append({'room': current_room.room_name,\
-                                         'room_type': current_room.roomType,\
+                                         'room_type': current_room.room_type,\
                                          'max': current_room.maximum_capacity,\
                                          'space': current_room.space,\
                                          'occupants': current_room.occuppants})
@@ -380,7 +382,7 @@ class Amity:
                 else:
                     self.livingspace.append(\
                         {'room': current_room.room_name,\
-                         'room_type': current_room.roomType,\
+                         'room_type': current_room.room_type,\
                          'max':current_room.maximum_capacity,\
                          'space': int(current_room.space),\
                          'occupants': current_room.occuppants})
