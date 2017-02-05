@@ -41,8 +41,8 @@ main.py allocate_office <first_name> <last_name>
 main.py allocate_livingspace <first_name> <last_name>
 main.py save_state [--db=sqlite_database]
 main.py load_state <sqlite_database>
-main.py deallocate_person <first_name> <last_name> <room_type>
 main.py quit
 main.py reset
 main.py clear
+main.py restart
 ```
