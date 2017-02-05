@@ -28,21 +28,19 @@ $ python main.py -i
 
 **Commands**
 ```
-main.py (-i | --interactive)
-main.py (-h | --help )
-main.py create_room <room_name>...
-main.py add_person <first_name> <last_name> <type> [--accommodate=N]
-main.py reallocate_person <first_name> <last_name> <new_room_name>
-main.py load_people
-main.py print_allocations [--o=file_name]
-main.py print_unallocated [--o=file_name]
-main.py print_room <room_name>
-main.py allocate_office <first_name> <last_name>
-main.py allocate_livingspace <first_name> <last_name>
-main.py save_state [--db=sqlite_database]
-main.py load_state <sqlite_database>
-main.py quit
-main.py reset
-main.py clear
-main.py restart
+create_room <room_name>...
+add_person <first_name> <last_name> <type> [--accommodate=N]
+reallocate_person <first_name> <last_name> <new_room_name>
+load_people
+print_allocations [--o=file_name]
+print_unallocated [--o=file_name]
+print_room <room_name>
+allocate_office <first_name> <last_name>
+allocate_livingspace <first_name> <last_name>
+save_state [--db=sqlite_database]
+load_state <sqlite_database>
+quit
+reset
+clear
+restart
 ```
