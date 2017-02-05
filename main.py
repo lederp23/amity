@@ -11,10 +11,10 @@ Usage:
   main.py allocate_livingspace <username>
   main.py save_state [--db=sqlite_database]
   main.py load_state <sqlite_database>
-  main.py deallocate_person <username> <room_type>
   main.py quit
   main.py reset
   main.py clear
+  main.py restart
   main.py ( -h | --help)
   main.py ( -i | --interactive)
 
@@ -36,10 +36,11 @@ from app.classes.amity import Amity
 
 init()
 font = Figlet(font = 'starwars')
-title = font.renderText('Amity')
+title = font.renderText('| Amity |')
 os.system('clear')
-cprint(title)
-
+cprint("-" * 70, 'cyan')
+cprint(title,  'cyan')
+cprint("-" * 70, 'cyan')
 
 def docopt_cmd(func):
     """
@@ -219,7 +220,9 @@ class AmityCli(cmd.Cmd):
         Usage: clear
         """
         os.system('clear')
-        cprint(title, 'green')
+        cprint("-" * 70, 'cyan')
+        cprint(title,  'cyan')
+        cprint("-" * 70, 'cyan')
         prompt = 'Amity>> '
 
     @docopt_cmd
@@ -275,8 +278,26 @@ class AmityCli(cmd.Cmd):
         self.amity.reallocated_people = []
         self.amity.changes = False
         self.amity.loaded = False
-        cprint(title)
+        cprint("-" * 70, 'cyan')
+        cprint(title,  'cyan')
+        cprint("-" * 70, 'cyan')
         AmityCli().cmdloop()
+
+    def do_restart(self, arg):
+        """
+        Usage: restart
+        """
+        os.system('clear')
+        cprint("Restarting.", 'cyan')
+        time.sleep(0.6)
+        os.system('clear')
+        cprint("Restarting..", 'yellow')
+        time.sleep(0.6)
+        os.system('clear')
+        cprint("Restarting...", 'green')
+        time.sleep(0.6)
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
 
 opt = docopt(__doc__, sys.argv[1:])
 

@@ -7,12 +7,12 @@ class Office(Room):
     def __init__(self, room, types):
         self.maximum_capacity = 6
         self.room = room
-        self.roomType = types
+        self.room_type = types
 
     def add(self):
         """Adds room to database"""
         new_room = RoomModel(room_name=str(self.room),\
-                             roomType=str(self.roomType),\
+                             room_type=str(self.room_type),\
                              maximum_capacity=int(self.maximum_capacity),\
                              space=str(self.maximum_capacity),\
                              occuppants=str(self.occuppants))

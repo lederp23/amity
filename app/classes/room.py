@@ -6,7 +6,7 @@ class Room():
     """Class for rooms in Amity"""
     maximum_capacity = 0
     room =""
-    roomType = ""
+    room_type = ""
     occuppants = ""
 
     def __init__(self):

@@ -46,7 +46,7 @@ class RoomModel(Base):
     __tablename__ = 'rooms'
     id = Column(Integer, primary_key = True, autoincrement = True)
     room_name = Column(String(50))
-    roomType = Column(String(50))
+    room_type = Column(String(50))
     maximum_capacity = Column(Integer)
     space = Column(Integer)
     occuppants = Column(String(100))
