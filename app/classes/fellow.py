@@ -1,8 +1,9 @@
 """Fellow class module"""
-import sys
+from sqlalchemy.orm.exc import UnmappedInstanceError
+from datetime import datetime
+
 from app.classes.person import Person
 from app.models.models import *
-from datetime import datetime
 
 class Fellow(Person):
     """Class for fellows"""
@@ -10,8 +11,9 @@ class Fellow(Person):
     livingroom = True
 
 
-    def add(self, name):
+    def add(self, name, username):
         """Adds fellow to database"""
-        fellow = FellowModel(name = name, dateAdded = datetime.now())
+        fellow = FellowModel(name=name, dateAdded=datetime.now(),\
+                             username=username)
         session.add(fellow)
         session.commit()

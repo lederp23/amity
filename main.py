@@ -1,17 +1,20 @@
 """
 Usage:
   main.py create_room <room_name>...
-  main.py add_person <fname_lname> <type> [--wants_accommodation]
-  main.py reallocate_person <fname_lname> <new_room_name>
+  main.py add_person <first_name> <last_name> <type> [--accommodate=N]
+  main.py reallocate_person <username> <new_room_name>
   main.py load_people
-  main.py print_allocations [--o=filename]
-  main.py print_unallocated [--o=filename]
+  main.py print_allocations [--o=file_name]
+  main.py print_unallocated [--o=file_name]
   main.py print_room <room_name>
+  main.py allocate_office <username>
+  main.py allocate_livingspace <username>
   main.py save_state [--db=sqlite_database]
   main.py load_state <sqlite_database>
   main.py quit
   main.py reset
   main.py clear
+  main.py restart
   main.py ( -h | --help)
   main.py ( -i | --interactive)
 
@@ -26,16 +29,18 @@ import os
 import time
 from docopt import docopt, DocoptExit
 from colorama import init
-from app.classes.amity import Amity
 from pyfiglet import Figlet
-from termcolor import colored
+from termcolor import colored, cprint
+
+from app.classes.amity import Amity
 
 init()
 font = Figlet(font = 'starwars')
-introd = font.renderText('Amity')
+title = font.renderText('| Amity |')
 os.system('clear')
-print(introd)
-
+cprint("-" * 70, 'cyan')
+cprint(title,  'cyan')
+cprint("-" * 70, 'cyan')
 
 def docopt_cmd(func):
     """
@@ -50,8 +55,8 @@ def docopt_cmd(func):
             # The DocoptExit is thrown when the args do not match.
             # We print a message to the user and the usage block.
 
-            print('Invalid Command!')
-            print(e)
+            cprint('Invalid Command!', 'red')
+            cprint(e, 'red')
             return
 
         except SystemExit:
@@ -67,110 +72,194 @@ def docopt_cmd(func):
     fn.__dict__.update(func.__dict__)
     return fn
 
-
-
-
 class AmityCli(cmd.Cmd):
     amity = Amity()
+    amity.load_state("amity")
     prompt = 'Amity>> '
     file = None
 
     @docopt_cmd
     def do_create_room(self, arg):
-        """Usage: create_room <room_name>..."""
+        """
+        Usage: create_room <room_name>...
+        """
         try:
-            print(self.amity.create_room(arg['<room_name>']))
+            cprint(self.amity.create_room(arg['<room_name>']), 'cyan')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_add_person(self, arg):
-        """Usage: add_person <fname_lname> <type> [--wants_accommodation=N]"""
+        """
+        Usage: add_person <first_name> <last_name> <type> [--accommodate=N]
+        """
         try:
-            print(self.amity.add_person(arg['<fname_lname>'], arg['<type>'],\
-            arg['--wants_accommodation']))
+            if arg['--accommodate'] == "Y" or \
+            arg['--accommodate'] == "N" or \
+            arg['--accommodate'] == "" or \
+            arg['--accommodate'] == None:
+                cprint(self.amity.add_person(arg['<first_name>'],\
+                                            arg['<last_name>'],\
+                                            arg['<type>'].upper(),\
+                                            arg['--accommodate']), 'cyan')
+            else:
+                cprint("--accommodate can only be Y or N", 'red')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_reallocate_person(self, arg):
-        """Usage: reallocate_person <fname_lname> <new_room_name>"""
+        """
+        Usage: reallocate_person <username> <new_room_name>
+        """
         try:
-            person = arg['<fname_lname>']
-            room = arg['<new_room_name>']
-            print(self.amity.reallocate(person, room))
+            cprint(self.amity.reallocate(arg['<username>'],\
+                                         arg['<new_room_name>']),
+                   'cyan')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_load_people(self, arg):
-        """Usage: load_people"""
-        print(self.amity.load())
+        """
+        Usage: load_people
+        """
+        cprint(self.amity.load_people(), 'cyan')
 
     @docopt_cmd
     def do_print_allocations(self, arg):
-        """Usage: print_allocations [--o=allocations]"""
+        """
+        Usage: print_allocations [--o=file_name]
+        """
         try:
-            print(self.amity.print_allocations(arg['--o']))
+            if not arg['--o'] == None:
+                if len(arg['--o']) > 0:
+                    cprint(self.amity.print_allocations(arg['--o']), 'cyan')
+                else:
+                    cprint("Add a file name when using --o.", 'red')
+            else:
+                cprint(self.amity.print_allocations(arg['--o']), 'cyan')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_print_unallocated(self, arg):
-        """Usage: print_unallocated [--o=filename]"""
+        """
+        Usage: print_unallocated [--o=file_name]
+        """
         try:
-            print(self.amity.print_unallocated(arg['--o']))
+            if not arg['--o'] == None:
+                if len(arg['--o']) > 0:
+                    cprint(self.amity.print_unallocated(arg['--o']), 'cyan')
+                else:
+                    cprint("Add a file name when using --o.", 'red')
+            else:
+                cprint(self.amity.print_unallocated(arg['--o']), 'cyan')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_print_room(self, arg):
-        """Usage: print_room <room_name>"""
+        """
+        Usage: print_room <room_name>
+        """
         try:
-            print(self.amity.print_room(arg['<room_name>']))
+            cprint(self.amity.print_room(arg['<room_name>']), 'cyan')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_save_state(self, arg):
-        """Usage: save_state [--db=amity]"""
+        """
+        Usage: save_state [--db=amity]
+        """
         try:
-            print(self.amity.save_state(arg['--db']))
+            if not arg['--db'] == None:
+                if len(arg['--db']) > 0:
+                    cprint(self.amity.save_state(arg['--db']), 'cyan')
+                else:
+                    cprint("Add a database name when using --db.", 'red')
+            else:
+                cprint(self.amity.save_state(arg['--db']), 'cyan')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_load_state(self, arg):
-        """Usage: load_state <sqlite_database>"""
+        """
+        Usage: load_state <sqlite_database>
+        """
         try:
-            print(self.amity.load_state(arg['<sqlite_database>']))
+            cprint(self.amity.load_state(arg['<sqlite_database>']), 'cyan')
         except ValueError:
-            print("Invalid argument")
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_quit(self, arg):
-        """Usage: quit"""
-        print('System closed.')
-        exit()
+        """
+        Usage: quit
+        """
+        if self.amity.changes:
+            choice = input("Save changes? (Y/N): ").upper()
+            if choice == "Y":
+                self.amity.save_state("amity")
+                cprint('Saved changes.', 'cyan')
+                exit()
+            elif choice == "N":
+                cprint('System closed.', 'green')
+                exit()
+            else:
+                cprint("Invalid choice. Enter Y for YES or N for NO.", 'red')
+        else:
+            cprint('System closed.', 'green')
+            exit()
 
     @docopt_cmd
     def do_clear(self, arg):
-        """Usage: clear"""
+        """
+        Usage: clear
+        """
         os.system('clear')
-        print(introd)
+        cprint("-" * 70, 'cyan')
+        cprint(title,  'cyan')
+        cprint("-" * 70, 'cyan')
         prompt = 'Amity>> '
 
     @docopt_cmd
+    def do_allocate_office(self, arg):
+        """
+        Usage: allocate_office <username>
+        """
+        try:
+            cprint(self.amity.allocate_person_office(arg['<username>']),
+                   'cyan')
+        except ValueError:
+            cprint("Load state first", 'Yyellow')
+
+    @docopt_cmd
+    def do_allocate_livingspace(self, arg):
+        """
+        Usage: allocate_livingspace <username>
+        """
+        try:
+            cprint(self.amity.allocate_person_livingspace(arg['<username>']),
+                   'cyan')
+        except ValueError:
+            cprint("Load state first", 'yellow')
+
+    @docopt_cmd
     def do_reset(self, arg):
-        """Usage: reset"""
+        """
+        Usage: reset
+        """
         os.system('clear')
-        print("Resetting.")
+        cprint("Resetting.", 'cyan')
         time.sleep(0.6)
         os.system('clear')
-        print("Resetting..")
+        cprint("Resetting..", 'yellow')
         time.sleep(0.6)
         os.system('clear')
-        print("Resetting...")
+        cprint("Resetting...", 'green')
         time.sleep(0.6)
         os.system('clear')
         self.amity.new_rooms = []
@@ -186,17 +275,36 @@ class AmityCli(cmd.Cmd):
         self.amity.livingspace_with_space = []
         self.amity.space = {}
         self.amity.reallocation = []
-        self.amity.reallocat = []
+        self.amity.reallocated_people = []
         self.amity.changes = False
-        print(introd)
+        self.amity.loaded = False
+        cprint("-" * 70, 'cyan')
+        cprint(title,  'cyan')
+        cprint("-" * 70, 'cyan')
         AmityCli().cmdloop()
+
+    def do_restart(self, arg):
+        """
+        Usage: restart
+        """
+        os.system('clear')
+        cprint("Restarting.", 'cyan')
+        time.sleep(0.6)
+        os.system('clear')
+        cprint("Restarting..", 'yellow')
+        time.sleep(0.6)
+        os.system('clear')
+        cprint("Restarting...", 'green')
+        time.sleep(0.6)
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
 
 opt = docopt(__doc__, sys.argv[1:])
 
 if opt['--interactive']:
-    print(__doc__)
+    cprint(__doc__)
     try:
         AmityCli().cmdloop()
     except KeyboardInterrupt:
-        print(colored("\nKeyboard Interrupt"), "yellow")
-    AmityCli().cmdloop()
+        cprint("\nKeyboard Interrupt", 'red')
+        exit()
