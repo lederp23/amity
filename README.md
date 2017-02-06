@@ -20,6 +20,12 @@ Install dependencies
 $ pip install -r requirements.txt
 ```
 
+Set up database
+
+```
+$ python app/models/models.py
+```
+
 Run the application
 
 ```
