@@ -30,12 +30,12 @@ import time
 from docopt import docopt, DocoptExit
 from colorama import init
 from pyfiglet import Figlet
-from termcolor import colored, cprint
+from termcolor import cprint
 
 from app.classes.amity import Amity
 
 init()
-font = Figlet(font = 'starwars')
+font = Figlet(font='starwars')
 title = font.renderText('| Amity |')
 os.system('clear')
 cprint("-" * 70, 'cyan')
@@ -262,22 +262,7 @@ class AmityCli(cmd.Cmd):
         cprint("Resetting...", 'green')
         time.sleep(0.6)
         os.system('clear')
-        self.amity.new_rooms = []
-        self.amity.new_persons = []
-        self.amity.offices = []
-        self.amity.livingspace = []
-        self.amity.rooms = []
-        self.amity.people = []
-        self.amity.allocations = []
-        self.amity.allocated_office = []
-        self.amity.allocated_living = []
-        self.amity.offices_with_space = []
-        self.amity.livingspace_with_space = []
-        self.amity.space = {}
-        self.amity.reallocation = []
-        self.amity.reallocated_people = []
-        self.amity.changes = False
-        self.amity.loaded = False
+        self.amity.reset()
         cprint("-" * 70, 'cyan')
         cprint(title,  'cyan')
         cprint("-" * 70, 'cyan')
