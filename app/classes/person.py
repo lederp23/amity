@@ -19,7 +19,7 @@ class Person():
         elif accomodation == 'Y':
             self.accomodate = True
 
-    def add_persons(self, names, pos, accomodation, username):
+    def add_persons(self, names, pos, accomodation, username, new_session):
         """Adds person to database"""
         if accomodation == "":
             accomodation = "N"
@@ -27,5 +27,5 @@ class Person():
                              accomodate=accomodation,\
                              dateAdded=datetime.now(),\
                              username=username)
-        session.add(person)
-        session.commit()
+        new_session.add(person)
+        new_session.commit()

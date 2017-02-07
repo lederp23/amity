@@ -49,16 +49,19 @@ class Amity:
                     if room_names[count] == new_room['room']:
                         room_found = True
                 if room_found:
-                    message = message + "\n" + room_names[count] + " has already been added"
+                    message = message + "\n" + room_names[count] + \
+                              " has already been added"
                 else:
                     if count > 0:
                         if not room_names[count] in room_names[:count]:
-                            message = message + "\n" + self.add_room(room_names[count])
+                            message = message + "\n" + \
+                                      self.add_room(room_names[count])
                         else:
                             message = message + "\n" +room_names[count] + \
                                       " has already been added"
                     else:
-                        message = message + "\n" + self.add_room(room_names[count])
+                        message = message + "\n" + \
+                                  self.add_room(room_names[count])
         return message
 
     def add_room(self, room):
@@ -80,26 +83,30 @@ class Amity:
     def add_person(self, first_name, last_name, position, accomodation):
         """Adds person"""
         name = first_name + " " + last_name
-        name = name.upper()
-        found = False
-        choice = "N"
-        for person in self.people:
-            if person['person'] == name:
-                found = True
-        if found:
-            choice = input("A user already exists with such a name. " +\
-                           "Enter 'Y' to proceed and 'N' to cancel.")
-            choice = choice.upper()
-            if choice == "Y":
-                return self.add_person_now(first_name, last_name, position,\
-                                    accomodation)
-            elif choice == "N":
-                return "Operation cancelled."
-            else:
-                return "Invalid choice. Can only be 'Y' or 'N'."
+        is_digit = any(char.isdigit() for char in name)
+        if is_digit:
+            return "Name cannot contain a digit"
         else:
-            return self.add_person_now(first_name, last_name, position, \
-                accomodation)
+            name = name.upper()
+            found = False
+            choice = "N"
+            for person in self.people:
+                if person['person'] == name:
+                    found = True
+            if found:
+                choice = input("A user already exists with such a name. " +\
+                               "Enter 'Y' to proceed and 'N' to cancel.")
+                choice = choice.upper()
+                if choice == "Y":
+                    return self.add_person_now(first_name, last_name, position,\
+                                        accomodation)
+                elif choice == "N":
+                    return "Operation cancelled."
+                else:
+                    return "Invalid choice. Can only be 'Y' or 'N'."
+            else:
+                return self.add_person_now(first_name, last_name, position, \
+                    accomodation)
 
     def add_person_now(self, first_name, last_name, position, accomodation):
         name = first_name + " " + last_name
@@ -438,7 +445,8 @@ class Amity:
                 new_fellow.add_persons(person['person'],\
                                        person['position'],\
                                        person['accomodate'],\
-                                       person['username'])
+                                       person['username'],
+                                       new_session)
             else:
                 new_staff = Staff(person['person'],\
                                   person['position'],\
@@ -448,7 +456,8 @@ class Amity:
                 new_staff.add_persons(person['person'],\
                                       person['position'],\
                                       person['accomodate'],\
-                                      person['username'])
+                                      person['username'],
+                                      new_session)
 
     def save_new_rooms(self, new_session):
         """Writes new rooms to database"""
