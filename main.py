@@ -200,7 +200,7 @@ class AmityCli(cmd.Cmd):
         Usage: quit
         """
         if self.amity.changes:
-            choice = input("Save changes? (Y/N): ").upper()
+            choice = input("Save changes? (Y for yes, N for no): ").upper()
             if choice == "Y":
                 self.amity.save_state("amity")
                 cprint('Saved changes.', 'cyan')

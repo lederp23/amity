@@ -116,6 +116,8 @@ class Amity:
             print(self.allocate_person_office(username))
             if position == 'FELLOW' and accomodation == 'Y':
                 print(self.allocate_person_livingspace(username))
+            elif position == 'STAFF' and accomodation == 'Y':
+                print("Staff cannot be allocated a livingspace")
             self.changes = True
             return "Successfully added " + name + " with username " + username
         else:
