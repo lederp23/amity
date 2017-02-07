@@ -37,6 +37,13 @@ class TestAddingPerson(TestCase):
             self.assertIn("Successfully added TANA LOPEZ",\
             self.amity.add_person("TANA", "LOPEZ", "FELLOW", "N"))
 
+    def test_adding_person_with_numerical_names(self):
+        """Tests for adding person using names with numbers"""
+        with patch('builtins.input', return_value='Y'):
+            self.amity.load_state("amity")
+            self.assertIn("Name cannot contain a digit",\
+            self.amity.add_person("111", "LOPEZ", "FELLOW", "N"))
+
     def test_adding_person_with_invalid_position(self):
         """Tests adding person who's position is not staff or fellow"""
         self.amity.load_state("amity")
