@@ -75,7 +75,7 @@ class Amity:
             self.changes = True
             return message
         else:
-            return "Wrong room type"
+            return room + " can only be office or livingspace"
 
     def add_person(self, first_name, last_name, position, accomodation):
         """Adds person"""
