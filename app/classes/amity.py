@@ -40,23 +40,42 @@ class Amity:
             room_lists.append(room['room'])
         room_type = ""
         message = ""
+        room_found = False
         for count in range(0, len(room_names)):
             if room_names[count] in room_lists:
                 message = room_names[count] + " already exists"
             else:
-                room_type = input("Enter room type for " + room_names[count] +\
-                                  ":")
-                if room_type.lower() == "office" or \
-                room_type.lower() == "livingspace":
-                    self.new_rooms.append({'room': room_names[count],\
-                    'room_type': room_type.lower()})
-                    message = message + "\nSuccessfully added " + \
-                              room_names[count]
-                    self.changes = True
+                for new_room in self.new_rooms:
+                    if room_names[count] == new_room['room']:
+                        room_found = True
+                if room_found:
+                    message = message + "\n" + room_names[count] + " has already been added"
                 else:
-                    message = message + "\n" +room_names[count] + \
-                              " can only be office or livingspace"
+                    if count > 0:
+                        if not room_names[count] in room_names[:count]:
+                            message = message + "\n" + self.add_room(room_names[count])
+                        else:
+                            message = message + "\n" +room_names[count] + \
+                                      " has already been added"
+                    else:
+                        message = message + "\n" + self.add_room(room_names[count])
         return message
+
+    def add_room(self, room):
+        """Creates a new room"""
+        message = ""
+        room_type = input("Enter room type for " +\
+                          room + ":")
+        if room_type.lower() == "office" or \
+        room_type.lower() == "livingspace":
+            self.new_rooms.append({'room': room,\
+            'room_type': room_type.lower()})
+            message = "Successfully added " + \
+                      room
+            self.changes = True
+            return message
+        else:
+            return "Wrong room type"
 
     def add_person(self, first_name, last_name, position, accomodation):
         """Adds person"""
@@ -98,7 +117,7 @@ class Amity:
             if position == 'FELLOW' and accomodation == 'Y':
                 print(self.allocate_person_livingspace(username))
             self.changes = True
-            return "Successfully added " + name + "with username " + username
+            return "Successfully added " + name + " with username " + username
         else:
             return "Wrong input. Can only be FELLOW or STAFF"
 
@@ -405,7 +424,7 @@ class Amity:
         except OperationalError:
             return database + " does not exist."
 
-    def save_new_people(self):
+    def save_new_people(self, new_session):
         """"Adds new people to database"""
         for person in self.new_persons:
             if person['position'] == "FELLOW":
@@ -413,7 +432,7 @@ class Amity:
                                     person['position'],\
                                     person['accomodate'],\
                                     person['username'])
-                new_fellow.add(person['person'], person['username'])
+                new_fellow.add(person['person'], person['username'], new_session)
                 new_fellow.add_persons(person['person'],\
                                        person['position'],\
                                        person['accomodate'],\
@@ -423,21 +442,21 @@ class Amity:
                                   person['position'],\
                                   person['accomodate'],\
                                   person['username'])
-                new_staff.add(person['person'], person['username'])
+                new_staff.add(person['person'], person['username'], new_session)
                 new_staff.add_persons(person['person'],\
                                       person['position'],\
                                       person['accomodate'],\
                                       person['username'])
 
-    def save_new_rooms(self):
+    def save_new_rooms(self, new_session):
         """Writes new rooms to database"""
         for room in self.new_rooms:
             if room['room_type'] == "office":
                 new_room = Office(room['room'], room['room_type'])
-                new_room.add()
+                new_room.add(new_session)
             elif room['room_type'] == "livingspace":
                 new_room = LivingSpace(room['room'], room['room_type'])
-                new_room.add()
+                new_room.add(new_session)
 
     def save_allocations(self, new_session):
         """Writes allocations to database"""
@@ -502,8 +521,8 @@ class Amity:
             session = sessionmaker(bind=engine)
             new_session = session()
             Base.metadata.create_all(engine)
-            self.save_new_people()
-            self.save_new_rooms()
+            self.save_new_people(new_session)
+            self.save_new_rooms(new_session)
             self.save_allocations(new_session)
             self.save_reallocations(new_session)
             self.update_rooms(new_session)

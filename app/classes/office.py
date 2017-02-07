@@ -9,12 +9,12 @@ class Office(Room):
         self.room = room
         self.room_type = types
 
-    def add(self):
+    def add(self, new_session):
         """Adds room to database"""
         new_room = RoomModel(room_name=str(self.room),\
                              room_type=str(self.room_type),\
                              maximum_capacity=int(self.maximum_capacity),\
                              space=str(self.maximum_capacity),\
                              occuppants=str(self.occuppants))
-        session.add(new_room)
-        session.commit()
+        new_session.add(new_room)
+        new_session.commit()

@@ -12,11 +12,11 @@ class Room():
     def __init__(self):
         """Creates a room"""
 
-    def delete(self, name):
+    def delete(self, name, new_session):
         """Deletes room from database"""
         try:
             room = session.query(RoomModel).filter_by(room_name=name).first()
-            session.delete(room)
-            session.commit()
+            new_session.add(room)
+            new_session.commit()
         except UnmappedInstanceError:
             pass

@@ -38,9 +38,9 @@ init()
 font = Figlet(font='starwars')
 title = font.renderText('| Amity |')
 os.system('clear')
-cprint("-" * 70, 'cyan')
+cprint("-" * 71, 'cyan')
 cprint(title,  'cyan')
-cprint("-" * 70, 'cyan')
+cprint("-" * 71, 'cyan')
 
 def docopt_cmd(func):
     """
@@ -287,7 +287,7 @@ class AmityCli(cmd.Cmd):
 opt = docopt(__doc__, sys.argv[1:])
 
 if opt['--interactive']:
-    cprint(__doc__)
+    cprint(__doc__, "yellow")
     try:
         AmityCli().cmdloop()
     except KeyboardInterrupt:

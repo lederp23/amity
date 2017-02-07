@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
+engine = create_engine("sqlite:///app/database/amity.db")
 
 class PersonModel(Base):
     """Model for Person"""
@@ -50,7 +51,4 @@ class RoomModel(Base):
     space = Column(Integer)
     occuppants = Column(String(100))
 
-engine = create_engine("sqlite:///app/database/amity.db")
-Session = sessionmaker(bind = engine)
-session = Session()
 Base.metadata.create_all(engine)

@@ -11,9 +11,9 @@ class Fellow(Person):
     livingroom = True
 
 
-    def add(self, name, username):
+    def add(self, name, username, new_session):
         """Adds fellow to database"""
         fellow = FellowModel(name=name, dateAdded=datetime.now(),\
                              username=username)
-        session.add(fellow)
-        session.commit()
+        new_session.add(fellow)
+        new_session.commit()
