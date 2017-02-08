@@ -1,7 +1,7 @@
 """
 Usage:
   main.py create_room <room_name>...
-  main.py add_person <first_name> <last_name> <type> [--accommodate=N]
+  main.py add_person <first_name> <last_name> <type> [--a=N]
   main.py reallocate_person <username> <new_room_name>
   main.py load_people
   main.py print_allocations [--o=file_name]
@@ -91,19 +91,19 @@ class AmityCli(cmd.Cmd):
     @docopt_cmd
     def do_add_person(self, arg):
         """
-        Usage: add_person <first_name> <last_name> <type> [--accommodate=N]
+        Usage: add_person <first_name> <last_name> <type> [--a=N]
         """
         try:
-            if arg['--accommodate'] == "Y" or \
-            arg['--accommodate'] == "N" or \
-            arg['--accommodate'] == "" or \
-            arg['--accommodate'] == None:
-                cprint(self.amity.add_person(arg['<first_name>'],\
-                                            arg['<last_name>'],\
+            if arg['--a'].upper() == "Y" or \
+            arg['--a'].upper() == "N" or \
+            arg['--a'] == "" or \
+            arg['--a'] == None:
+                cprint(self.amity.add_person(arg['<first_name>'].upper(),\
+                                            arg['<last_name>'].upper(),\
                                             arg['<type>'].upper(),\
-                                            arg['--accommodate']), 'cyan')
+                                            arg['--a'].upper()), 'cyan')
             else:
-                cprint("--accommodate can only be Y or N", 'red')
+                cprint("--a can only be Y or N", 'red')
         except ValueError:
             cprint("Invalid argument", 'red')
 

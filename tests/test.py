@@ -66,8 +66,8 @@ class TestAddingRoom(TestCase):
         """Tests for adding room that already exists"""
         with patch('builtins.input', return_value='office'):
             self.amity.load_state("amity")
-            self.assertEqual(self.amity.create_room(["Valhalla"]),\
-                             "Valhalla already exists")
+            self.assertEqual(self.amity.create_room(["perl"]),\
+                             "perl already exists")
 
     def test_adding_room_with_wrong_room_type(self):
         """Tests for adding room with wrong room type"""

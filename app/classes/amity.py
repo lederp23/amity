@@ -215,8 +215,9 @@ class Amity:
         for room in self.rooms:
             if not room['room_type'] == rooms_type:
                 rooms_type = room['room_type']
-                output += ("\n" + ("*" * (len(rooms_type) + 1))+ "\n"  + rooms_type.upper() + "S\n" \
-                           + ("*" * (len(rooms_type) + 1)))
+                output += ("\n" + ("*" * (len(rooms_type) + 1))+ "\n"  +\
+                           rooms_type.upper() + "S\n" +\
+                           ("*" * (len(rooms_type) + 1)))
             if not room['occupants'] == "":
                 output += "\n"
                 output += (room['room'] + "\n" +\
@@ -330,9 +331,9 @@ class Amity:
                         try:
                             self.offices_with_space.remove(\
                                  current_room['room'])
-                            self.allocate_person_office(username)
+                            return self.allocate_person_office(username)
                         except ValueError:
-                            self.allocate_person_office(username)
+                            return self.allocate_person_office(username)
             else:
                 return name + " has already been allocated an office."
         else:
@@ -373,9 +374,9 @@ class Amity:
                             try:
                                 self.livingspace_with_space.remove(\
                                     current_room['room'])
-                                self.allocate_person_livingspace(username)
+                                return self.allocate_person_livingspace(username)
                             except ValueError:
-                                self.allocate_person_livingspace(username)
+                                return self.allocate_person_livingspace(username)
                 else:
                     return name + " has already been allocated a living space."
             else:
