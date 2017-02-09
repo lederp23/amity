@@ -49,7 +49,7 @@ class Amity:
                     if room_names[count] == new_room['room']:
                         room_found = True
                 if room_found:
-                    message = message + "\n" + room_names[count] + \
+                    message = message + "\n" + room_names[count] +\
                               " has already been added"
                 else:
                     if count > 0:
