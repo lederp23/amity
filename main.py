@@ -3,7 +3,7 @@ Usage:
   main.py create_room <room_name>...
   main.py add_person <first_name> <last_name> <type> [--a=N]
   main.py reallocate_person <username> <new_room_name>
-  main.py load_people
+  main.py load_people [--f=file_name]
   main.py print_allocations [--o=file_name]
   main.py print_unallocated [--o=file_name]
   main.py print_room <room_name>
@@ -74,7 +74,6 @@ def docopt_cmd(func):
 
 class AmityCli(cmd.Cmd):
     amity = Amity()
-    amity.load_state("amity")
     prompt = 'Amity>> '
     file = None
 
@@ -124,9 +123,18 @@ class AmityCli(cmd.Cmd):
     @docopt_cmd
     def do_load_people(self, arg):
         """
-        Usage: load_people
+        Usage: load_people [--f=file_name]
         """
-        cprint(self.amity.load_people(), 'cyan')
+        try:
+            if not arg['--f'] == None:
+                if len(arg['--f']) > 0:
+                    cprint(self.amity.load_people(arg['--f']), 'cyan')
+                else:
+                    cprint("Add a file name when using --f.", 'red')
+            else:
+                cprint(self.amity.load_people(arg['--f']), 'cyan')
+        except ValueError:
+            cprint("Invalid argument", 'red')
 
     @docopt_cmd
     def do_print_allocations(self, arg):

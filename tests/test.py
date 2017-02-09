@@ -60,7 +60,7 @@ class TestAddingRoom(TestCase):
         """Tests for adding room successfully"""
         with patch('builtins.input', return_value='office'):
             self.assertEqual(self.amity.create_room(["Roundtable"]),\
-                             "\nSuccessfully added Roundtable")
+                             "\nSuccessfully added ROUNDTABLE")
 
     def test_adding_room_that_exists_in_amity(self):
         """Tests for adding room that already exists"""
@@ -73,7 +73,7 @@ class TestAddingRoom(TestCase):
         """Tests for adding room with wrong room type"""
         with patch('builtins.input', return_value='off'):
             self.assertEqual(self.amity.create_room(["Roundtable"]),\
-                             "\nRoundtable can only be office or livingspace")
+                             "\nROUNDTABLE can only be office or livingspace")
 
 class TestAllocatingRoom(TestCase):
     """Holds all tests for allocating rooms"""
@@ -171,7 +171,7 @@ class TestLoadingPeople(TestCase):
     def test_load_successful(self):
         """Tests for loading people successfully"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.load_people(), "Successfully loaded.")
+        self.assertEqual(self.amity.load_people("names"), "Successfully loaded.")
 
 class TestPrintingAllocations(TestCase):
     """Holds all tests for printing room allocations"""

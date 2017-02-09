@@ -39,7 +39,7 @@ class Amity:
         """creates new room"""
         room_lists = []
         for room in self.rooms:
-            room_lists.append(room['room'])
+            room_lists.append(room['room'].upper())
         room_type = ""
         message = ""
         room_found = False
@@ -69,12 +69,33 @@ class Amity:
     def add_room(self, room):
         """Creates a new room"""
         message = ""
+        room = room.upper()
         room_type = input("Enter room type for " +\
                           room + ":")
         if room_type.lower() == "office" or \
         room_type.lower() == "livingspace":
             self.new_rooms.append({'room': room.upper(),\
             'room_type': room_type.lower()})
+            self.rooms.append({'room': room,\
+                               'room_type': room_type.lower(),\
+                               'max': [6 if room_type.lower() == "office" else 4],\
+                               'space': [6 if room_type.lower() == "office" else 4],\
+                               'occupants': ""})
+            if room_type.lower() == "office":
+                self.offices.append({'room': room,\
+                                   'room_type': room_type.lower(),\
+                                   'max': [6 if room_type.lower() == "office" else 4],\
+                                   'space': [6 if room_type.lower() == "office" else 4],\
+                                   'occupants': ""})
+                self.offices_with_space.append(room)
+            if room_type.lower() == "livingspace":
+                self.livingspace.append({'room': room,\
+                                   'room_type': room_type.lower(),\
+                                   'max': [6 if room_type.lower() == "office" else 4],\
+                                   'space': [6 if room_type.lower() == "office" else 4],\
+                                   'occupants': ""})
+                self.livingspace_with_space.append(room)
+            self.space[room] = (6 if room_type.lower() == "office" else 4)
             message = "Successfully added " + \
                       room
             self.changes = True
@@ -123,7 +144,7 @@ class Amity:
                                 'accomodate': accomodation,\
                                 'username': username})
             print(self.allocate_person_office(username))
-            if position == 'FELLOW' and accomodation.upper() == 'Y':
+            if position == 'FELLOW' and (accomodation == 'Y' or accomodation == 'y'):
                 print(self.allocate_person_livingspace(username))
             elif position == 'STAFF' and (accomodation == 'Y' or \
                  accomodation == 'y'):
@@ -153,7 +174,6 @@ class Amity:
         if found:
             for roomy in self.rooms:
                 if name in roomy['occupants']:
-                    print(roomy['occupants'])
                     current_rooms.append(roomy['room'])
                     room_types.append(roomy['room_type'])
             if not room in current_rooms:
@@ -212,7 +232,19 @@ class Amity:
         """Prints a list of room allocations"""
         output = ""
         rooms_type = ""
-        for room in self.rooms:
+        for room in self.offices:
+            if not room['room_type'] == rooms_type:
+                rooms_type = room['room_type']
+                output += ("\n" + ("*" * (len(rooms_type) + 1))+ "\n"  +\
+                           rooms_type.upper() + "S\n" +\
+                           ("*" * (len(rooms_type) + 1)))
+            if not room['occupants'] == "":
+                output += "\n"
+                output += (room['room'] + "\n" +\
+                           ("-" * len(room['occupants'][1:])) + "\n")
+                output += (room['occupants'][1:])
+                output += "\n"
+        for room in self.livingspace:
             if not room['room_type'] == rooms_type:
                 rooms_type = room['room_type']
                 output += ("\n" + ("*" * (len(rooms_type) + 1))+ "\n"  +\
@@ -266,13 +298,14 @@ class Amity:
         else:
             return output
 
-    def load_people(self):
+    def load_people(self, file_name):
         """Loads people from txt file"""
         accomodate = ""
         individual = []
+        source = ('names' if file_name == None else file_name)
         if self.loaded:
             try:
-                names = open('names.txt', 'r')
+                names = open(source + '.txt', 'r')
                 self.new_person_details = names.readlines()
                 for person in self.new_person_details:
                     person.replace(r"\n", "")
@@ -297,7 +330,7 @@ class Amity:
                         print(name + " has already been added.")
                 return "Successfully loaded."
             except FileNotFoundError:
-                return "names.txt not found."
+                return source + " not found."
         else:
             return "Load state first"
 
@@ -327,6 +360,9 @@ class Amity:
                                                      'occupant': name})
                             self.allocated_office.append(username)
                             self.changes = True
+                            for room in self.rooms:
+                                if room['room'] == current_room['room']:
+                                    room['occupants'] = new_occupants
                             return "Successfully allocated " + name + " to " +\
                                 current_room['room']
                         else:
@@ -363,7 +399,6 @@ class Amity:
                             return "There is no livingspace with space"
                         else:
                             if self.space[current_room['room']] > 0:
-                                print(current_room)
                                 new_occupants = current_room['occupants'] + ',' +\
                                                 name
                                 current_room['occupants'] = new_occupants
@@ -374,6 +409,9 @@ class Amity:
                                       'occupant': name})
                                 self.allocated_living.append(username)
                                 self.changes = True
+                                for room in self.rooms:
+                                    if room['room'] == current_room['room']:
+                                        room['occupants'] = new_occupants
                                 return "Successfully allocated " + name + \
                                     " to "+ current_room['room']
                             else:
@@ -559,9 +597,11 @@ class Amity:
             self.changes = False
             self.loaded = False
             if not database == None:
-                shutil.copy2(('app/database/' + self.default_db + '.db'), ('app/database/' + database + '.db'))
+                shutil.copy2(('app/database/' + self.default_db + '.db'), \
+                             ('app/database/' + database + '.db'))
             engine = create_engine("sqlite:///app/database/" +\
-                                  (self.default_db if database == None else database)\
+                                   (self.default_db if \
+                                    database == None else database)\
                                    + ".db")
             session = sessionmaker(bind=engine)
             new_session = session()
