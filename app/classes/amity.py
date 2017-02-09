@@ -311,29 +311,33 @@ class Amity:
                 name = person['person']
         if found:
             if not username in self.allocated_office:
-                room_number = randint(0, (len(self.offices)-1))
-                current_room = self.offices[room_number]
-                if len(self.offices_with_space) < 1:
-                    return "There is no office with space"
-                else:
-                    if self.space[current_room['room']] > 0:
-                        new_occupants = current_room['occupants'] + ',' + name
-                        current_room['occupants'] = new_occupants
-                        self.space[current_room['room']] -= 1
-                        self.offices[room_number] = current_room
-                        self.allocations.append({'room':current_room['room'],\
-                                                 'occupant': name})
-                        self.allocated_office.append(username)
-                        self.changes = True
-                        return "Successfully allocated " + name + " to " +\
-                            current_room['room']
+                try:
+                    room_number = randint(0, (len(self.offices)-1))
+                    current_room = self.offices[room_number]
+                    if len(self.offices_with_space) < 1:
+                        return "There is no office with space"
                     else:
-                        try:
-                            self.offices_with_space.remove(\
-                                 current_room['room'])
-                            return self.allocate_person_office(username)
-                        except ValueError:
-                            return self.allocate_person_office(username)
+                        if self.space[current_room['room']] > 0:
+                            new_occupants = current_room['occupants'] + ',' + \
+                                            name
+                            current_room['occupants'] = new_occupants
+                            self.space[current_room['room']] -= 1
+                            self.offices[room_number] = current_room
+                            self.allocations.append({'room':current_room['room'],\
+                                                     'occupant': name})
+                            self.allocated_office.append(username)
+                            self.changes = True
+                            return "Successfully allocated " + name + " to " +\
+                                current_room['room']
+                        else:
+                            try:
+                                self.offices_with_space.remove(\
+                                     current_room['room'])
+                                return self.allocate_person_office(username)
+                            except ValueError:
+                                return self.allocate_person_office(username)
+                except ValueError:
+                    return "There is no office to allocate " + name
             else:
                 return name + " has already been allocated an office."
         else:
@@ -352,31 +356,34 @@ class Amity:
         if found:
             if not position == "STAFF":
                 if not username in self.allocated_living:
-                    room_number = randint(0, (len(self.livingspace)-1))
-                    current_room = self.livingspace[room_number]
-                    if len(self.livingspace_with_space) < 1:
-                        return "There is no livingspace with space"
-                    else:
-                        if self.space[current_room['room']] > 0:
-                            new_occupants = current_room['occupants'] + ',' +\
-                                            name
-                            current_room['occupants'] = new_occupants
-                            self.space[current_room['room']] -= 1
-                            self.livingspace[room_number] = current_room
-                            self.allocations.append(\
-                                 {'room': current_room['room'],\
-                                  'occupant': name})
-                            self.allocated_living.append(username)
-                            self.changes = True
-                            return "Successfully allocated " + name + \
-                                " to "+ current_room['room']
+                    try:
+                        room_number = randint(0, (len(self.livingspace)-1))
+                        current_room = self.livingspace[room_number]
+                        if len(self.livingspace_with_space) < 1:
+                            return "There is no livingspace with space"
                         else:
-                            try:
-                                self.livingspace_with_space.remove(\
-                                    current_room['room'])
-                                return self.allocate_person_livingspace(username)
-                            except ValueError:
-                                return self.allocate_person_livingspace(username)
+                            if self.space[current_room['room']] > 0:
+                                new_occupants = current_room['occupants'] + ',' +\
+                                                name
+                                current_room['occupants'] = new_occupants
+                                self.space[current_room['room']] -= 1
+                                self.livingspace[room_number] = current_room
+                                self.allocations.append(\
+                                     {'room': current_room['room'],\
+                                      'occupant': name})
+                                self.allocated_living.append(username)
+                                self.changes = True
+                                return "Successfully allocated " + name + \
+                                    " to "+ current_room['room']
+                            else:
+                                try:
+                                    self.livingspace_with_space.remove(\
+                                        current_room['room'])
+                                    return self.allocate_person_livingspace(username)
+                                except ValueError:
+                                    return self.allocate_person_livingspace(username)
+                    except ValueError:
+                        return "There is no livingspace to allocate " + name
                 else:
                     return name + " has already been allocated a living space."
             else:

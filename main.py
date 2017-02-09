@@ -94,14 +94,14 @@ class AmityCli(cmd.Cmd):
         Usage: add_person <first_name> <last_name> <type> [--a=N]
         """
         try:
-            if arg['--a'].upper() == "Y" or \
+            if arg['--a'].upper() == "Y" or\
             arg['--a'].upper() == "N" or \
             arg['--a'] == "" or \
             arg['--a'] == None:
                 cprint(self.amity.add_person(arg['<first_name>'].upper(),\
-                                            arg['<last_name>'].upper(),\
-                                            arg['<type>'].upper(),\
-                                            arg['--a'].upper()), 'cyan')
+                                             arg['<last_name>'].upper(),\
+                                             arg['<type>'].upper(),\
+                                             arg['--a'].upper()), 'cyan')
             else:
                 cprint("--a can only be Y or N", 'red')
         except ValueError:
@@ -171,7 +171,7 @@ class AmityCli(cmd.Cmd):
     @docopt_cmd
     def do_save_state(self, arg):
         """
-        Usage: save_state [--db=amity]
+        Usage: save_state [--db=database]
         """
         try:
             if not arg['--db'] == None:
