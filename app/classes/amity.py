@@ -94,7 +94,7 @@ class Amity:
                 if person['person'] == name:
                     found = True
             if found:
-                choice = input("A user already exists with such a name. " +\
+                choice = input("A user already exists with such a name. " + \
                                "Enter 'Y' to proceed and 'N' to cancel.")
                 choice = choice.upper()
                 if choice == "Y":
