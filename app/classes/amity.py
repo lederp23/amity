@@ -1,4 +1,5 @@
 """Main class module"""
+import shutil
 from random import randint
 from collections import defaultdict
 from sqlalchemy.orm import sessionmaker
@@ -16,6 +17,7 @@ from app.models.models import *
 class Amity:
     """Contains main functions"""
     loaded = False
+    default_db = ""
     new_person_details = []
     new_rooms = []
     new_persons = []
@@ -123,7 +125,8 @@ class Amity:
             print(self.allocate_person_office(username))
             if position == 'FELLOW' and accomodation.upper() == 'Y':
                 print(self.allocate_person_livingspace(username))
-            elif position == 'STAFF' and (accomodation == 'Y' or accomodation == 'y'):
+            elif position == 'STAFF' and (accomodation == 'Y' or \
+                 accomodation == 'y'):
                 print("Staff cannot be allocated a livingspace")
             self.changes = True
             return "Successfully added " + name + " with username " + username
@@ -131,52 +134,52 @@ class Amity:
             return "Wrong input. Can only be FELLOW or STAFF"
 
     def reallocate(self, username, room):
-        """Reassigns a person to a different room"""
+        """Gets reallocation details"""
         position = ""
         accomodate = "N"
-        current_room = ""
-        new_room = ""
+        current_rooms = []
         found = False
         room_found = False
         message = ""
         name_count = 0
         name = ''
         room_types = []
-        count = 0
-        current_room_index = 0
         for persons in self.people:
             if persons['username'] == username:
                 position = persons['position']
                 accomodate = persons['accomodate']
                 found = True
-                person = persons['person']
-        for guy in self.people:
-            if guy['person'] == name:
-                name_count += 1
+                name = persons['person']
         if found:
             for roomy in self.rooms:
-                if not roomy['occupants'].find(person) == -1:
-                    current_room = roomy['room']
+                if name in roomy['occupants']:
+                    print(roomy['occupants'])
+                    current_rooms.append(roomy['room'])
                     room_types.append(roomy['room_type'])
-                    current_room_index = count
-                count += 1
-            if not current_room == room:
-                message = self.reallocate_person(room, current_room, person,\
-                          room_found, room_types, current_room_index)
+            if not room in current_rooms:
+                message = self.reallocate_person(room, current_rooms, name,\
+                          room_found, room_types)
             else:
-                if name_count > 1:
-                    message = self.reallocate_person(room, current_room,\
-                                                     person, room_types,\
-                                                     current_room_index)
-                else:
-                    message = person + " has already been allocated to " + room
+                message = name + " has already been allocated to " + room
         else:
             message = "Person does not exist"
         return message
 
-    def reallocate_person(self, room, current_room, person, room_found,\
-                          room_types, current_room_index):
+    def reallocate_person(self, room, current_rooms, person, room_found,\
+                          room_types):
+        """Reallocates person"""
         message = ""
+        current_room = ""
+        current_room_index = 0
+        new_room_type = ""
+        for roomy in self.rooms:
+            if room == roomy['room']:
+                new_room_type = roomy['room_type']
+        for roomy in self.rooms:
+            if new_room_type == roomy['room_type'] and \
+            roomy['room'] in current_rooms:
+                current_room = roomy['room']
+                current_room_index = self.rooms.index(roomy)
         for roomy in self.rooms:
             if roomy['room'] == room:
                 room_found = True
@@ -185,21 +188,18 @@ class Amity:
                               "with rooms of different types"
                 else:
                     if self.space[roomy['room']] > 0:
-                        try:
-                            self.space[room] -= 1
-                            self.space[current_room] += 1
-                            self.reallocated_people.append(\
-                                {'current': current_room,\
-                                 'new': room, 'person': person})
-                            roomy['occupants'] += ("," + person)
-                            self.rooms[current_room_index]['occupants'] = \
-                            self.rooms[current_room_index]['occupants'].\
-                            replace(("," + person), "")
-                            message = person + " has been reallocated to "\
-                                      + room
-                            self.changes = True
-                        except KeyError:
-                            message = "Person had not been allocated a room"
+                        self.space[room] -= 1
+                        self.space[current_room] += 1
+                        self.reallocated_people.append(\
+                            {'current': current_room,\
+                             'new': room, 'person': person})
+                        roomy['occupants'] += ("," + person)
+                        self.rooms[current_room_index]['occupants'] = \
+                        self.rooms[current_room_index]['occupants'].\
+                        replace(("," + person), "")
+                        message = person + " has been reallocated to "\
+                                  + room
+                        self.changes = True
                         break
                     else:
                         message = room + " is full."
@@ -363,6 +363,7 @@ class Amity:
                             return "There is no livingspace with space"
                         else:
                             if self.space[current_room['room']] > 0:
+                                print(current_room)
                                 new_occupants = current_room['occupants'] + ',' +\
                                                 name
                                 current_room['occupants'] = new_occupants
@@ -414,6 +415,7 @@ class Amity:
         """Loads data from database"""
         self.reset()
         try:
+            self.default_db = database
             engine = create_engine("sqlite:///app/database/" + database + ".db")
             session = sessionmaker(bind=engine)
             new_session = session()
@@ -556,8 +558,10 @@ class Amity:
         if self.changes:
             self.changes = False
             self.loaded = False
+            if not database == None:
+                shutil.copy2(('app/database/' + self.default_db + '.db'), ('app/database/' + database + '.db'))
             engine = create_engine("sqlite:///app/database/" +\
-                                  ("amity" if database == None else database)\
+                                  (self.default_db if database == None else database)\
                                    + ".db")
             session = sessionmaker(bind=engine)
             new_session = session()

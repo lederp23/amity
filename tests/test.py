@@ -134,8 +134,8 @@ class TestReallocatingRoom(TestCase):
     def test_reallocating_person_successfully(self):
         """Tests for reallocating person successfully"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("TL6", "Occulus"),\
-                         "TANA LOPEZ has been reallocated to Occulus")
+        self.assertEqual(self.amity.reallocate("TL6", "Narnia"),\
+                         "TANA LOPEZ has been reallocated to Narnia")
 
     def test_reallocating_person_to_full_room(self):
         """Tests for reallocating person to a room with no space"""
@@ -158,9 +158,9 @@ class TestReallocatingRoom(TestCase):
     def test_already_allocated_person_to_current_room(self):
         """Tests for reallocating person to his/her current room"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("OM17",\
+        self.assertEqual(self.amity.reallocate("MY15",\
                                                "Hogwarts"),\
-                         "OLIVERS MUNALA has already" + \
+                         "ME YOUS has already" + \
                          " been allocated to Hogwarts")
 
 class TestLoadingPeople(TestCase):
