@@ -94,14 +94,16 @@ class AmityCli(cmd.Cmd):
         Usage: add_person <first_name> <last_name> <type> [--a=N]
         """
         try:
-            if arg['--a'].upper() == "Y" or\
-            arg['--a'].upper() == "N" or \
+            if arg['--a'] == "Y" or\
+            arg['--a'] == "y" or\
+            arg['--a'] == "N" or\
+            arg['--a'] == "n" or \
             arg['--a'] == "" or \
             arg['--a'] == None:
                 cprint(self.amity.add_person(arg['<first_name>'].upper(),\
                                              arg['<last_name>'].upper(),\
                                              arg['<type>'].upper(),\
-                                             arg['--a'].upper()), 'cyan')
+                                             arg['--a']), 'cyan')
             else:
                 cprint("--a can only be Y or N", 'red')
         except ValueError:

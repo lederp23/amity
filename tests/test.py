@@ -84,7 +84,7 @@ class TestAllocatingRoom(TestCase):
         """Tests for allocating an office successfully"""
         self.amity.load_state("amity")
         self.assertIn("Successfully allocated KEVIN MUNALA",\
-                      self.amity.allocate_person_office("KM16"))
+                      self.amity.allocate_person_office("KM17"))
 
     def test_allocating_office_to_already_allocated_person(self):
         """
@@ -111,8 +111,8 @@ class TestAllocatingRoom(TestCase):
         Tests for allocating a livingspace to person who has an office already
         """
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.allocate_person_livingspace("MY22"),\
-                         "me yous has already been allocated a living space.")
+        self.assertEqual(self.amity.allocate_person_livingspace("MY15"),\
+                         "ME YOUS has already been allocated a living space.")
 
     def test_allocating_livingspace_to_person_who_does_not_exist(self):
         """Tests for allocatin a livingspace to person who does not exist"""
@@ -123,7 +123,7 @@ class TestAllocatingRoom(TestCase):
     def test_allocating_livingspace_to_staff(self):
         """Tests for allocatin a livingspace to staff member"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.allocate_person_livingspace("GG23"),\
+        self.assertEqual(self.amity.allocate_person_livingspace("GG16"),\
                          "Living spaces are for fellows only")
 
 class TestReallocatingRoom(TestCase):
@@ -158,9 +158,9 @@ class TestReallocatingRoom(TestCase):
     def test_already_allocated_person_to_current_room(self):
         """Tests for reallocating person to his/her current room"""
         self.amity.load_state("amity")
-        self.assertEqual(self.amity.reallocate("OM15",\
+        self.assertEqual(self.amity.reallocate("OM17",\
                                                "Hogwarts"),\
-                         "Olivers Munala has already" + \
+                         "OLIVERS MUNALA has already" + \
                          " been allocated to Hogwarts")
 
 class TestLoadingPeople(TestCase):
