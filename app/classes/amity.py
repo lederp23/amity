@@ -69,37 +69,34 @@ class Amity:
     def add_room(self, room):
         """Creates a new room"""
         message = ""
-        room_space = 0
         room = room.upper()
-        room_type = input("Enter room type for " +\
+        room_types = input("Enter room type for " +\
                           room + ":")
+        room_type = room_types.lower()
+        room_space = (6 if room_type == "office" else 4)
         if room_type.lower() == "office" or \
-        room_type.lower() == "livingspace":
+        room_type == "livingspace":
             self.new_rooms.append({'room': room.upper(),\
-            'room_type': room_type.lower()})
+            'room_type': room_type})
             self.rooms.append({'room': room,\
-                               'room_type': room_type.lower(),\
-                               'max': (6 if room_type.lower() == "office" else 4),\
-                               'space': (6 if room_type.lower() == "office" else 4),\
+                               'room_type': room_type,\
+                               'max': room_space,\
+                               'space': room_space,\
                                'occupants': ""})
             if room_type.lower() == "office":
                 self.offices.append({'room': room,\
-                                   'room_type': room_type.lower(),\
-                                   'max': (6 if room_type.lower() == "office" else 4),\
-                                   'space': (6 if room_type.lower() == "office" else 4),\
+                                   'room_type': room_type,\
+                                   'max': room_space,\
+                                   'space': room_space,\
                                    'occupants': ""})
                 self.offices_with_space.append(room)
             if room_type.lower() == "livingspace":
                 self.livingspace.append({'room': room,\
-                                   'room_type': room_type.lower(),\
-                                   'max': (6 if room_type.lower() == "office" else 4),\
-                                   'space': (6 if room_type.lower() == "office" else 4),\
+                                   'room_type': room_type,\
+                                   'max': room_space,\
+                                   'space': room_space,\
                                    'occupants': ""})
                 self.livingspace_with_space.append(room)
-            if room_type.lower() == "office":
-                room_space = 6
-            else:
-                room_space = 4
             self.space[room]= room_space
             message = "Successfully added " + \
                       room
@@ -211,7 +208,8 @@ class Amity:
                 room_found = True
                 if not roomy['room_type'] in room_types:
                     message = "Reallocation cannot happen " +\
-                              "with rooms of different types"
+                              "with rooms of different types or if" + \
+                              " a person had not been allocated a room."
                 else:
                     if self.space[roomy['room']] > 0:
                         self.space[room] -= 1
