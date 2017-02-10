@@ -23,6 +23,7 @@ $ pip install -r requirements.txt
 Set up database
 
 ```
+$ mkdir app/database
 $ python app/models/models.py
 ```
 
