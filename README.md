@@ -51,3 +51,5 @@ reset
 clear
 restart
 ```
+
+A tutorial on how to use the app is at https://www.youtube.com/watch?v=nwclBVAvWP0.
