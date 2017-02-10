@@ -234,3 +234,18 @@ class TestSavingState(TestCase):
         self.amity.load_state("amity")
         self.amity.add_person("Oliver", "Munlaz", "FELLOW", "N")
         self.assertEqual(self.amity.changes, True)
+
+class TestShowUsername(TestCase):
+    """Holds tests for showing username"""
+    def setUp(self):
+        self.amity = Amity()
+        self.amity.load_state("amity")
+
+    def test_show_username_successfully(self):
+        """Tests for showing a person's username successfully"""
+        self.assertEqual(self.amity.show_username("DOMINIC WALTERS"), "DW2\n")
+
+    def test_show_username_for_missing_person(self):
+        """Tests for showing a person's username successfully"""
+        self.assertEqual(self.amity.show_username("DOM WALTERS"), \
+                         "Person not found")

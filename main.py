@@ -11,6 +11,7 @@ Usage:
   main.py allocate_livingspace <username>
   main.py save_state [--db=sqlite_database]
   main.py load_state <sqlite_database>
+  main.py show_username <first_name> <last_name>
   main.py quit
   main.py reset
   main.py clear
@@ -293,6 +294,18 @@ class AmityCli(cmd.Cmd):
         time.sleep(0.6)
         python = sys.executable
         os.execl(python, python, *sys.argv)
+
+    def do_show_username(self, arg):
+        """
+        Usage: show_username <first_name> <last_name>
+        """
+        name = arg
+        is_digit = any(char.isdigit() for char in name)
+        if is_digit:
+            cprint("Name cannot contain a digit.", "red")
+        else:
+            cprint(self.amity.show_username(name), "cyan")
+
 
 opt = docopt(__doc__, sys.argv[1:])
 

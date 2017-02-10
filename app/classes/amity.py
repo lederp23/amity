@@ -214,6 +214,9 @@ class Amity:
                             {'current': current_room,\
                              'new': room, 'person': person})
                         roomy['occupants'] += ("," + person)
+                        self.rooms[current_room_index]['space'] = \
+                        self.space[current_room]
+                        roomy['space'] = self.space[room]
                         self.rooms[current_room_index]['occupants'] = \
                         self.rooms[current_room_index]['occupants'].\
                         replace(("," + person), "")
@@ -369,9 +372,9 @@ class Amity:
                             try:
                                 self.offices_with_space.remove(\
                                      current_room['room'])
-                                return self.allocate_person_office(username)
                             except ValueError:
-                                return self.allocate_person_office(username)
+                                pass
+                            return self.allocate_person_office(username)
                 except ValueError:
                     return "There is no office to allocate " + name
             else:
@@ -643,3 +646,14 @@ class Amity:
             return "Room not found"
         else:
             return people_list
+
+    def show_username(self, name):
+        """Shows the username of a person"""
+        output = ""
+        for person in self.people:
+            if person['person'] == name.upper():
+                output += (person['username'] + "\n")
+        if output == "":
+            return "Person not found"
+        else:
+            return output
