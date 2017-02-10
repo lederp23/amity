@@ -135,19 +135,19 @@ class TestReallocatingRoom(TestCase):
         """Tests for reallocating person successfully"""
         self.amity.load_state("amity")
         self.assertEqual(self.amity.reallocate("TL6", "Narnia"),\
-                         "TANA LOPEZ has been reallocated to Narnia")
+                         "TANA LOPEZ has been reallocated to NARNIA")
 
     def test_reallocating_person_to_full_room(self):
         """Tests for reallocating person to a room with no space"""
         self.amity.load_state("amity")
         self.assertEqual(self.amity.reallocate("TL6", "Valhalla"),\
-                         "Valhalla is full.")
+                         "VALHALLA is full.")
 
     def test_reallocating_person_to_missing_room(self):
         """Tests for reallocating person to a room that does not exist"""
         self.amity.load_state("amity")
         self.assertEqual(self.amity.reallocate("TL6", "hsssog"),\
-                         "hsssog does not exist.")
+                         "HSSSOG does not exist.")
 
     def test_reallocating_person_who_does_not_exist(self):
         """Tests for reallocating person who does not exist"""
@@ -161,7 +161,7 @@ class TestReallocatingRoom(TestCase):
         self.assertEqual(self.amity.reallocate("MY15",\
                                                "Hogwarts"),\
                          "ME YOUS has already" + \
-                         " been allocated to Hogwarts")
+                         " been allocated to HOGWARTS")
 
 class TestLoadingPeople(TestCase):
     """Holds all tests for loading people"""
@@ -181,7 +181,7 @@ class TestPrintingAllocations(TestCase):
     def test_print_allocations_successfully(self):
         """Tests for prining allocations successfully"""
         self.amity.load_state("amity")
-        self.assertIn("Valhalla", self.amity.print_allocations("o"))
+        self.assertIn("VALHALLA", self.amity.print_allocations("o"))
 
 class TestPrintingUnallocatedPeople(TestCase):
     """Holds all tests for printing unallocated people"""
@@ -201,7 +201,7 @@ class TestPrintingRoomOccupants(TestCase):
     def test_printing_room_successfully(self):
         """Tests for printing room successfully"""
         self.amity.load_state("amity")
-        self.assertIn("Valhalla", self.amity.print_room("Valhalla"))
+        self.assertIn("VALHALLA", self.amity.print_room("Valhalla"))
 
     def test_printing_missing_room(self):
         """Tests for printing room that does not exist"""
