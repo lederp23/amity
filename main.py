@@ -2,16 +2,16 @@
 Usage:
   main.py create_room <room_name>...
   main.py add_person <first_name> <last_name> <type> [--a=N]
-  main.py reallocate_person <username> <new_room_name>
+  main.py reallocate_person <user_id> <new_room_name>
   main.py load_people [--f=file_name]
   main.py print_allocations [--o=file_name]
   main.py print_unallocated [--o=file_name]
   main.py print_room <room_name>
-  main.py allocate_office <username>
-  main.py allocate_livingspace <username>
+  main.py allocate_office <user_id>
+  main.py allocate_livingspace <user_id>
   main.py save_state [--db=sqlite_database]
   main.py load_state <sqlite_database>
-  main.py show_username <first_name> <last_name>
+  main.py show_user_id <first_name> <last_name>
   main.py quit
   main.py reset
   main.py clear
@@ -112,10 +112,10 @@ class AmityCli(cmd.Cmd):
     @docopt_cmd
     def do_reallocate_person(self, arg):
         """
-        Usage: reallocate_person <username> <new_room_name>
+        Usage: reallocate_person <user_id> <new_room_name>
         """
         try:
-            cprint(self.amity.reallocate(arg['<username>'],\
+            cprint(self.amity.reallocate(arg['<user_id>'],\
                                          arg['<new_room_name>']),
                    'cyan')
         except ValueError:
@@ -239,10 +239,10 @@ class AmityCli(cmd.Cmd):
     @docopt_cmd
     def do_allocate_office(self, arg):
         """
-        Usage: allocate_office <username>
+        Usage: allocate_office <user_id>
         """
         try:
-            cprint(self.amity.allocate_person_office(arg['<username>']),
+            cprint(self.amity.allocate_person_office(arg['<user_id>']),
                    'cyan')
         except ValueError:
             cprint("Load state first", 'Yyellow')
@@ -250,10 +250,10 @@ class AmityCli(cmd.Cmd):
     @docopt_cmd
     def do_allocate_livingspace(self, arg):
         """
-        Usage: allocate_livingspace <username>
+        Usage: allocate_livingspace <user_id>
         """
         try:
-            cprint(self.amity.allocate_person_livingspace(arg['<username>']),
+            cprint(self.amity.allocate_person_livingspace(arg['<user_id>']),
                    'cyan')
         except ValueError:
             cprint("Load state first", 'yellow')
@@ -295,16 +295,16 @@ class AmityCli(cmd.Cmd):
         python = sys.executable
         os.execl(python, python, *sys.argv)
 
-    def do_show_username(self, arg):
+    def do_show_user_id(self, arg):
         """
-        Usage: show_username <first_name> <last_name>
+        Usage: show_user_id <first_name> <last_name>
         """
         name = arg
         is_digit = any(char.isdigit() for char in name)
         if is_digit:
             cprint("Name cannot contain a digit.", "red")
         else:
-            cprint(self.amity.show_username(name), "cyan")
+            cprint(self.amity.show_user_id(name), "cyan")
 
 
 opt = docopt(__doc__, sys.argv[1:])

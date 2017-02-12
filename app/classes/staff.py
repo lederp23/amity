@@ -9,9 +9,9 @@ class Staff(Person):
     """Class for staff"""
     livingroom = False
 
-    def add(self, name, username, new_session):
+    def add(self, name, user_id, new_session):
         """Adds Staff to database"""
         staff = StaffModel(name=name, dateAdded=datetime.now(),\
-                           username=username)
+                           user_id=user_id)
         new_session.add(staff)
         new_session.commit()

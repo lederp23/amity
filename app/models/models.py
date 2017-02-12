@@ -5,17 +5,17 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
-engine = create_engine("sqlite:///app/database/amity.db")
+engine = create_engine("sqlite:///app/database/default.db")
 
 class PersonModel(Base):
     """Model for Person"""
     __tablename__ = 'persons'
     id = Column(Integer, primary_key = True, autoincrement = True)
     name = Column(String(50))
-    position = Column (String(50))
+    role = Column (String(50))
     accomodate = Column (String(1))
     dateAdded = Column (DateTime())
-    username = Column (String(50))
+    user_id = Column (String(50))
 
 class FellowModel(Base):
     """Model for Fellow"""
@@ -23,7 +23,7 @@ class FellowModel(Base):
     id = Column(Integer, primary_key = True, autoincrement = True)
     name = Column(String(50))
     dateAdded = Column (DateTime())
-    username = Column (String(50))
+    user_id = Column (String(50))
 
 class StaffModel(Base):
     """Model for Staff"""
@@ -31,7 +31,7 @@ class StaffModel(Base):
     id = Column(Integer, primary_key = True, autoincrement = True)
     name = Column(String(50))
     dateAdded = Column (DateTime())
-    username = Column (String(50))
+    user_id = Column (String(50))
 
 class AmityModel(Base):
     """Model for Amity"""
