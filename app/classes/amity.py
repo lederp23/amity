@@ -637,6 +637,15 @@ class Amity:
         else:
             return people_list
 
+    def update_rooms(self, new_session):
+        """Updates room occupants"""
+        for room in self.rooms:
+            statement = update(RoomModel).where(\
+                        RoomModel.room_name == room['room'])\
+                        .values({'occuppants': room['occupants']})
+            new_session.execute(statement)
+            new_session.commit()
+
     def show_user_id(self, name):
         """Shows the user_id of a person"""
         output = ""
