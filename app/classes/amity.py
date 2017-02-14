@@ -590,7 +590,9 @@ class Amity:
             self.changes = False
             self.loaded = False
             try:
-                os.remove("app/database/" + (database if database is not None else self.default_db) + ".db")
+                os.remove("app/database/" + \
+                        (database if database is not None else self.default_db)\
+                        + ".db")
             except OSError:
                 pass
             if not database == None:
