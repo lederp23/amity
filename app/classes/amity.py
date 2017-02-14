@@ -19,7 +19,7 @@ from app.models.models import *
 class Amity:
     """Contains main functions"""
     loaded = False
-    default_db = ""
+    default_db = "amity"
     new_person_details = []
     new_rooms = []
     new_persons = []
@@ -505,6 +505,7 @@ class Amity:
 
     def save_new_people(self, new_session):
         """"Adds new people to database"""
+        self.new_persons = self.people
         for person in self.new_persons:
             if person['role'] == "FELLOW":
                 new_fellow = Fellow(person['person'],\
@@ -531,6 +532,7 @@ class Amity:
 
     def save_new_rooms(self, new_session):
         """Writes new rooms to database"""
+        self.new_rooms = self.rooms
         for room in self.new_rooms:
             if room['room_type'] == "office":
                 new_room = Office(room['room'], room['room_type'])
@@ -587,6 +589,10 @@ class Amity:
         if self.changes:
             self.changes = False
             self.loaded = False
+            try:
+                os.remove("app/database/" + (database if database is not None else self.default_db) + ".db")
+            except OSError:
+                pass
             if not database == None:
                 shutil.copy2(('app/database/default.db'), \
                              ('app/database/' + database + '.db'))
