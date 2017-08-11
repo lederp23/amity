@@ -15,5 +15,5 @@ requests==2.18.2
 six==1.10.0
 SQLAlchemy==1.1.12
 termcolor==1.1.0
-wrapt==1.10.10
+wrapt==1.10.11
 mock==2.0.0
